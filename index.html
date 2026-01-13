@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Your Daily CORTIS!</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --grey: #333333;
+            --mid-grey: #494848;
+            --light-grey: #f4f4f4;
+            --switch-bg: #f0f0f0;
+            --accent: #dcae96;
+            --gold: #FFD700;
+            --disabled: #a0a0a0;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        html, body {
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+            background: var(--bg); color: var(--grey);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            position: fixed; 
+            touch-action: none;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .app { 
+            display: flex; flex-direction: column; width: 100%; max-width: 500px; 
+            height: 100dvh; margin: 0 auto;
+            padding: env(safe-area-inset-top) 15px env(safe-area-inset-bottom);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* --- Header --- */
+        header.header-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 5px 5px 0px; flex-shrink: 0; height: 45px;
+        }
+
+        .header-side { flex: 1; display: flex; align-items: center; }
+        .header-side.right { justify-content: flex-end; gap: 10px; }
+
+        header h1 { 
+            flex: 2; margin: 0; font-size: clamp(1.1rem, 5vw, 1.4rem); 
+            font-weight: 900; text-align: center; color: var(--mid-grey);
+            white-space: nowrap; letter-spacing: -0.5px;
+        }
+
+        /* --- Language Switcher --- */
+        .lang-switch-pill {
+            position: relative;
+            width: 58px; 
+            height: 28px; 
+            background: var(--switch-bg);
+            border-radius: 14px; 
+            display: flex;
+            align-items: center; 
+            cursor: pointer; 
+            padding: 2px;
+            border: 1px solid #e5e5e5; 
+            user-select: none;
+        }
+
+        .lang-switch-pill span {
+            flex: 1; font-size: 0.65rem; font-weight: 800; z-index: 2;
+            color: #aaa; transition: color 0.3s; text-align: center;
+        }
+
+        .pill-thumb {
+            position: absolute; width: 24px; height: 22px;
+            background: #fff; border-radius: 12px; left: 2px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 1;
+        }
+
+        .app.lang-zh .pill-thumb { transform: translateX(0px); }
+        .app.lang-zh #label-zh { color: var(--mid-grey); }
+        .app.lang-zh #label-en { color: #aaa; }
+        .app.lang-en .pill-thumb { transform: translateX(28px); }
+        .app.lang-en #label-en { color: var(--mid-grey); }
+        .app.lang-en #label-zh { color: #aaa; }
+
+        /* --- Gallery Button --- */
+        .gallery-btn {
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+            background: var(--light-grey);
+            color: var(--mid-grey);
+            border: none; cursor: pointer;
+            transition: background 0.2s;
+        }
+        .gallery-btn svg { width: 18px; height: 18px; fill: currentColor; }
+        .gallery-btn:active { background: #e0e0e0; }
+
+        /* --- Main Content --- */
+        #quote { 
+            font-size: 0.85rem; 
+            color: #747373; 
+            margin-top: 5px;
+            font-weight: 600; 
+            line-height: 1.4;
+            min-height: 3em;
+            display: block;
+            text-align: center;
+            padding: 0 20px; 
+            flex-shrink: 0;
+        }
+
+        main {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            position: relative; width: 100%; min-height: 0;
+        }
+
+        .window {
+            position: relative; height: 95%; max-height: 420px;
+            aspect-ratio: 2 / 3; background: #fff;
+            border-radius: 15px; border: 1px solid #eee;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* --- PULL SCENE STYLES --- */
+        #pull-scene {
+            position: absolute; inset: 0; 
+            overflow: hidden;
+            display: none; 
+            z-index: 200; 
+        }
+        #pull-scene.active { display: block; }
+
+        #pull-card-container {
+            position: absolute; left: 50%; width: 85%; height: 90%; 
+            transform: translate(-50%, 0); z-index: 5;
+            bottom: -60%; 
+            transition: transform 0.1s linear; 
+            will-change: bottom; cursor: grab;
+            touch-action: none; 
+        }
+        
+        #pull-card-container.snap-back { transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #pull-card-container.extracted { transition: bottom 0.6s cubic-bezier(0.23, 1, 0.32, 1), transform 0.6s ease; }
+
+        .pull-card-inner {
+            width: 100%; height: 100%; border-radius: 10px;
+            background-size: cover; background-position: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative;
+        }
+
+        .sleeve {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 50%;
+            background: linear-gradient(to bottom, #444, #222);
+            z-index: 10; border-top: 2px solid #555;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+            border-radius: 0 0 15px 15px; 
+            pointer-events: none; 
+        }
+        .sleeve::before {
+            content: ""; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 30px; background: inherit;
+            clip-path: polygon(0% 100%, 15% 0%, 85% 0%, 100% 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sleeve-logo {
+            color: rgba(255,255,255,0.15); font-weight: 900; font-size: 2rem; 
+            letter-spacing: 5px; pointer-events: none; user-select: none;
+        }
+
+        /* Success State Display */
+        #success-view {
+            position: absolute; inset: 0; display: none; 
+            align-items: center; justify-content: center;
+            z-index: 220; 
+        }
+        #success-view.active { display: flex; }
+        
+        .final-card {
+            width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            position: relative; overflow: hidden;
+        }
+
+        #overlay {
+            position: absolute; inset: 0; z-index: 100;
+            background: rgba(255, 255, 255, 0.98);
+            display: flex; align-items: center; justify-content: center;
+            perspective: 1000px; transition: opacity 0.4s ease;
+        }
+
+        .card { width: 160px; height: 240px; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .card.flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; border: 1.5px solid var(--mid-grey); display: flex; align-items: center; justify-content: center; }
+        .card-back { background: var(--mid-grey); color: #fff; font-weight: bold; letter-spacing: 2px; font-size: 0.9rem; }
+        .card-front { background: #fff; color: var(--mid-grey); transform: rotateY(180deg); font-weight: 700; text-transform: uppercase; font-size: 0.9rem; }
+
+        /* --- GLOSS EFFECT --- */
+        .gloss-effect { position: relative; overflow: hidden; }
+        .gloss-effect::after {
+            content: ""; position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
+            background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.4) 40%, rgba(255, 255, 255, 0.6) 50%, rgba(255, 255, 255, 0.4) 60%, transparent 80%);
+            transform: skewX(-20deg); pointer-events: none; z-index: 2;
+            animation: gloss-sweep 3s infinite ease-in-out; opacity: 0.7;
+        }
+        #success-view .gloss-effect::after { opacity: 0.4; animation-duration: 4s; }
+        @keyframes gloss-sweep { 0% { left: -150%; } 30% { left: 150%; } 100% { left: 150%; } }
+
+        .sparkle-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 30; overflow: hidden; }
+
+        /* --- Footer --- */
+        footer { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; padding: 10px 0 15px; }
+        .btn-group { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; min-height: 110px; }
+        
+        .btn-base { 
+            width: 80%; max-width: 220px; height: 48px; border-radius: 50px; 
+            font-weight: 800; font-size: 0.9rem; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; 
+            transition: 0.2s; border: none; 
+        }
+        
+        .btn-primary { background: var(--mid-grey); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        .btn-disabled {
+            background: var(--disabled) !important;
+            color: #fff !important;
+            cursor: default !important;
+            box-shadow: none !important;
+            animation: none !important;
+        }
+
+        /* Updated secondary button styles (for Finish state) */
+        .btn-secondary { background: #fff; color: var(--mid-grey); border: 2px solid var(--mid-grey); }
+        .hidden-all { opacity: 0 !important; pointer-events: none !important; }
+        @keyframes breathing-float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); background-color: #555; } }
+        .btn-active-float { animation: breathing-float 2s ease-in-out infinite; }
+
+        .copyright { margin-top: 10px; font-size: 0.55rem; color: #bbb; text-align: center; line-height: 1.4; padding: 0 20px; }
+        .footer-link { color: #aaa; text-decoration: underline; }
+
+        /* --- Modals & Hints --- */
+        .hint-text {
+            position: absolute; bottom: 80px; width: 100%; text-align: center;
+            color: rgba(255,255,255,0.6); font-size: 0.7rem; font-weight: 600;
+            pointer-events: none; z-index: 210; animation: pulse-hint 2s infinite;
+        }
+        @keyframes pulse-hint { 0%,100%{opacity: 0.5; transform: translateY(0);} 50%{opacity: 1; transform: translateY(-5px);} }
+
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(255, 255, 255, 0.95);
+            z-index: 3000; display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .modal-overlay.show { opacity: 1; }
+        .name-box { width: 85%; max-width: 340px; text-align: center; background: #fff; padding: 35px 25px; border-radius: 30px; box-shadow: 0 15px 50px rgba(0,0,0,0.12); }
+        .name-box h2 { margin: 0 0 10px; font-weight: 900; letter-spacing: 2px; color: var(--mid-grey); }
+        .modal-intro { font-size: 0.85rem; color: #888; line-height: 1.5; margin-bottom: 20px; font-weight: 500; }
+        .modal-prompt { font-size: 0.85rem; color: var(--mid-grey); margin-bottom: 20px; font-weight: 800; }
+        #user-name-input { background: #f9f9f9; border: 2px solid #eee; width: 100%; padding: 12px 20px; border-radius: 50px; font-size: 0.8rem; text-align: center; outline: none; margin-bottom: 20px; transition: border-color 0.3s; }
+        #user-name-input:focus { border-color: var(--mid-grey); }
+        #modal-btn { width: 100%; height: 50px; background: var(--mid-grey); color: #fff; border: none; border-radius: 50px; font-weight: 800; font-size: 0.85rem; cursor: pointer; }
+        .user-clickable { color: var(--mid-grey); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-weight: 900; transition: opacity 0.2s; display: inline; }
+        .user-clickable:hover { opacity: 0.6; }
+
+        /* --- GALLERY STYLES (UPDATED) --- */
+        #gallery-view {
+            position: fixed; inset: 0; background: #fafafa; z-index: 2000;
+            display: flex; flex-direction: column;
+            transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #gallery-view.active { transform: translateY(0); }
+        
+        .gallery-header {
+            padding: 15px 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #f0f0f0;
+            flex-shrink: 0; height: 60px;
+            position: sticky; top: 0; z-index: 10;
+        }
+        
+        .gallery-title-group { display: flex; flex-direction: column; }
+        .g-title-main { font-weight: 900; font-size: 1.1rem; color: var(--mid-grey); line-height: 1; }
+        .g-title-sub { font-size: 0.7rem; color: #aaa; font-weight: 600; margin-top: 4px; }
+
+        .close-gallery-btn, .back-gallery-btn {
+            background: none; border: none; font-size: 1.5rem; color: var(--grey);
+            cursor: pointer; padding: 5px; display: flex; align-items: center;
+        }
+        
+        .gallery-container { flex: 1; overflow: hidden; position: relative; }
+        .g-page {
+            position: absolute; inset: 0; overflow-y: auto;
+            transition: transform 0.3s ease, opacity 0.3s ease; 
+            padding-bottom: 40px;
+        }
+        
+        /* New Gallery Hero Section */
+        .gallery-hero {
+            width: 100%; aspect-ratio: 16/9;
+            background-size: cover; background-position: center;
+            position: relative; margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .gallery-hero::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+        }
+        .hero-content {
+            position: absolute; bottom: 15px; left: 20px; z-index: 2; color: #fff;
+        }
+        .hero-content h2 { margin: 0; font-weight: 900; letter-spacing: 2px; font-size: 1.5rem; }
+        .hero-content p { margin: 5px 0 0; font-size: 0.75rem; opacity: 0.9; font-weight: 500; }
+
+        /* Updated Member List Styling */
+        .member-list { 
+            display: flex; flex-direction: column; gap: 15px; padding: 0 20px 40px; 
+        }
+        
+        .member-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px; padding: 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; 
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            transition: all 0.2s ease;
+            position: relative; overflow: hidden;
+        }
+        .member-card:active { transform: scale(0.98); }
+        .member-card::before {
+            content: ""; position: absolute; left: 0; top: 0; width: 4px; height: 100%;
+            background: var(--mid-grey); opacity: 0; transition: opacity 0.2s;
+        }
+        .member-card:hover::before { opacity: 1; }
+
+        .m-info { display: flex; flex-direction: column; gap: 4px; z-index: 1; }
+        .m-name { font-weight: 800; font-size: 1.1rem; color: var(--mid-grey); letter-spacing: 1px; }
+        .m-stats { font-size: 0.75rem; color: #999; font-weight: 600; text-transform: uppercase; }
+        .m-arrow { color: #ddd; }
+
+        /* Grid for Detail Page */
+        #gallery-detail { 
+            transform: translateX(100%); pointer-events: none; opacity: 0; 
+            padding: 20px; background: #fff;
+        }
+        #gallery-detail.active { transform: translateX(0); pointer-events: auto; opacity: 1; }
+        
+        .g-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); 
+            gap: 5px; align-content: start;
+            padding-bottom: 80px;
+        }
+
+        .g-item {
+            aspect-ratio: 2/3; position: relative; border-radius: 6px; overflow: hidden;
+            background: #f0f0f0; transition: transform 0.2s; border: 1px solid #eee;
+        }
+        .g-item.unlocked { border: 1px solid #ccc; }
+        .g-item:active { transform: scale(0.96); }
+        .g-img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s; }
+        .g-item.locked .g-img { filter: blur(4px) grayscale(100%); opacity: 0.4; }
+        .g-lock-icon {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            color: #555; opacity: 0; pointer-events: none;
+        }
+        .g-item.locked .g-lock-icon { opacity: 0.8; }
+        .g-lock-icon svg { width: 16px; height: 16px; }
+        .new-badge {
+            position: absolute; top: 2px; right: 2px; background: #ff4757; 
+            width: 6px; height: 6px; border-radius: 50%; box-shadow: 0 0 0 1px #fff;
+            display: none; padding: 0;
+        }
+        .g-item.just-unlocked .new-badge { display: block; }
+
+        /* --- PREVIEW MODAL --- */
+        #image-preview-modal {
+            position: fixed; inset: 0; z-index: 4000; background: rgba(0,0,0,0.9);
+            display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;
+        }
+        #image-preview-modal.active { display: flex; opacity: 1; }
+        #preview-img {
+            max-width: 95vw; max-height: 90vh; border-radius: 4px; 
+            box-shadow: 0 0 30px rgba(0,0,0,0.5); object-fit: contain;
+            transform: scale(0.9); transition: transform 0.3s ease;
+        }
+        #image-preview-modal.active #preview-img { transform: scale(1); }
+
+        .preview-close-btn {
+            position: absolute; top: 20px; right: 20px; width: 44px; height: 44px;
+            background: rgba(255,255,255,0.2); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;
+            color: #fff; backdrop-filter: blur(5px); z-index: 4001;
+        }
+        .preview-close-btn svg { width: 24px; height: 24px; fill: currentColor; }
+        
+        #toast {
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            background: rgba(30, 30, 30, 0.9); color: white;
+            padding: 10px 20px; border-radius: 30px;
+            font-size: 0.8rem; font-weight: 600;
+            pointer-events: none; opacity: 0; transition: opacity 0.3s;
+            z-index: 5000; text-align: center; white-space: nowrap;
+        }
+        #toast.show { opacity: 1; }
+        
+    </style>
+</head>
+<body class="lang-zh">
+
+<!-- Name Entry Modal -->
+<div id="name-modal" class="modal-overlay">
+    <div class="name-box">
+        <p id="modal-intro" class="modal-intro"></p> 
+        <p id="modal-prompt" class="modal-prompt"></p>
+        <input type="text" id="user-name-input" placeholder="" maxlength="10">
+        <button onclick="saveName()" id="modal-btn"></button>
+    </div>
+</div>
+
+<!-- Image Preview Modal -->
+<div id="image-preview-modal" onclick="closePreview()">
+    <button class="preview-close-btn">
+        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+    </button>
+    <img id="preview-img" src="" alt="Preview" onclick="event.stopPropagation()">
+</div>
+
+<!-- Toast -->
+<div id="toast">尚未取得，抽到後即可查看</div>
+
+<!-- Gallery View -->
+<div id="gallery-view">
+    <header class="gallery-header">
+        <div class="gallery-title-group">
+            <div class="g-title-main" id="g-header-title">Gallery</div>
+            <div class="g-title-sub" id="g-header-sub">Collection</div>
+        </div>
+        <div id="g-ctrl-home">
+            <button class="close-gallery-btn" onclick="toggleGallery(false)">&times;</button>
+        </div>
+        <div id="g-ctrl-back" style="display: none;">
+            <button class="back-gallery-btn" onclick="backToGalleryHome()">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            </button>
+        </div>
+    </header>
+    <div class="gallery-container">
+        <div id="gallery-home" class="g-page">
+            <!-- Injected by JS -->
+            <div id="gallery-hero-container"></div> 
+            <div class="member-list" id="member-list-container"></div>
+        </div>
+        <div id="gallery-detail" class="g-page">
+            <div class="g-grid" id="gallery-grid"></div>
+        </div>
+    </div>
+</div>
+
+<div class="app" id="app-container">
+    <header class="header-row">
+        <div class="header-side">
+            <button class="gallery-btn" onclick="toggleGallery(true)" aria-label="Gallery">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5-7l-3 3.72L9 13l-3 4h12l-4-5z"/></svg>
+            </button>
+        </div>
+        <h1 id="title-main">Your Daily CORTIS!</h1>
+        <div class="header-side right">
+            <div class="lang-switch-pill" onclick="toggleLanguage()">
+                <span id="label-zh">中</span><span id="label-en">EN</span><div class="pill-thumb"></div>
+            </div>
+        </div>
+    </header>
+    
+    <div id="quote"></div>
+
+    <main>
+        <div class="window" id="card-window">
+            
+            <!-- 0. Default Overlay (Card Back) -->
+            <div id="overlay">
+                <div id="card-obj" class="card">
+                    <div class="card-face card-back">CORTIS</div>
+                    <div id="card-name" class="card-face card-front">?</div>
+                </div>
+            </div>
+
+            <!-- 1. Pulling Scene -->
+            <div id="pull-scene">
+                <!-- Hint text -->
+                <div class="hint-text" id="pull-hint"></div>
+
+                <!-- The Draggable Card -->
+                <div id="pull-card-container">
+                    <div class="pull-card-inner" id="pull-card-img"></div>
+                </div>
+
+                <!-- The Static Sleeve (Foreground) -->
+                <div class="sleeve">
+                    <div class="sleeve-logo">CORTIS</div>
+                </div>
+            </div>
+
+            <!-- 2. Success Result View (Replaces Canvas) -->
+            <div id="success-view">
+                <!-- Final Card with Gloss -->
+                <div class="final-card gloss-effect" id="final-card-img"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer id="ui-footer">
+        <div class="btn-group" id="btn-group">
+            <button id="main-btn" class="btn-base btn-primary" onclick="handleMain()">抽取小卡</button>
+            <button id="redraw-btn" class="btn-base btn-secondary" style="display: none;" onclick="resetGame()">返回</button>
+        </div>
+        <div id="copy-text" class="copyright"></div>
+    </footer>
+</div>
+
+<script>
+    /* --- DATA --- */
+    const i18n = {
+        zh: {
+            title: "Your Daily CORTIS!",
+            pullBtn: "開出今日小卡 ({left}/3)", 
+            breakBtn: "抽取中...", 
+            backBtn: "回到主畫面",
+            limitBtn: "今日已用完 (3/3)",
+            pullHint: "往上拉出小卡",
+            nameIntro: "Hi, COER! <br>動動手指，來開一張今天的驚喜小卡吧！✨",
+            namePrompt: "在開始之前，該怎麼稱呼你呢？",
+            namePlaceholder: "輸入暱稱...",
+            nameBtn: "確定",
+            galleryTitle: "成員圖鑑",
+            gallerySub: "Official Collection",
+            galleryLocked: "尚未取得，抽到後即可查看",
+            galleryCollected: "已收集",
+            welcomeMsgs: [
+                "嗨 {user} ！今天想遇見哪位團員呢？✨",
+                "{user} ，今天的手氣如何？抽張小卡試試看吧！🔮",
+                "準備好接收今日份的 CORTIS 能量了嗎， {user}？💪",
+                "{user} ，來抽一張專屬於你今天的本命小卡吧！💖"
+            ],
+            limitMsg: "今天的運氣用完啦！明天再來 (3/3) 🌙",
+            pullMsgs: [
+                "心跳加速中...是誰躲在卡套裡？",
+                "慢慢拉出來...不要急...",
+                "哇！感覺這張卡的氣場很不一樣！",
+                "會是你心中的本命嗎？"
+            ],
+            successMsgs: [
+                "✨ {user}，捕捉到最閃耀的 {name} 了！",
+                "💖 {user}，這是屬於你的限定 {name}！",
+                "🌟 完美的瞬間！{user} 遇見了正在發光的 {name}",
+                "🎬 收藏成功！{user} 把 {name} 帶入庫了"
+            ],
+            copyright: "本網頁為 CORTIS 應援小作品，非官方發行。© 2026 Your Daily CORTIS! by <a href='https://www.threads.net/@leeami0720' target='_blank' class='footer-link'>@leeami0720</a>"  
+        },
+        en: {
+            title: "Your Daily CORTIS!",
+            pullBtn: "Open Today's Card ({left}/3)", 
+            breakBtn: "Pulling...", 
+            backBtn: "Back to Home",
+            limitBtn: "Done for Today (3/3)",
+            pullHint: "Swipe Up To Reveal",
+            nameIntro: "Hi, COER! <br>Ready for your daily surprise? Pull to reveal your card! ✨",
+            namePrompt: "Before we start, what is your name?",
+            namePlaceholder: "Enter nickname...",
+            nameBtn: "Let's Go",
+            galleryTitle: "Gallery",
+            gallerySub: "Official Collection",
+            galleryLocked: "Locked. Pull to unlock!",
+            galleryCollected: "Collected",
+            welcomeMsgs: [
+                "Hi {user}! Which member do you want to meet today? ✨",
+                "How's your luck today, {user}? Pull a card to find out! 🔮",
+                "Ready for your daily dose of CORTIS energy, {user}? 💪"
+            ],
+            limitMsg: "Today's luck is used up! Come back tomorrow (3/3) 🌙",
+            pullMsgs: [
+                "Heart racing... Who is inside?",
+                "Pull slowly... No rush...",
+                "Wow! This card feels special!",
+                "Is it your bias?"
+            ],
+            successMsgs: [
+                "✨ {user}, you've caught the brightest {name}!",
+                "💖 {user}, this is your limited edition {name}!",
+                "🌟 A perfect moment! {user} just met the glowing {name}",
+                "🎬 Successfully collected! {user} has added {name} to the vault"
+            ],
+            copyright: "This is a non-official fan-made project. © 2026 Your Daily CORTIS! by <a href='https://www.threads.net/leeami0720' target='_blank' class='footer-link'>@leeami0720</a>"
+        }
+    };
+
+    const members = [
+        { 
+            name: 'MARTIN', 
+            imgs: [
+                'https://i.meee.com.tw/MOYXYYH.jpg', 'https://i.meee.com.tw/SEXIiU3.jpg', 'https://i.meee.com.tw/zFRjemR.jpg', 'https://i.meee.com.tw/nybbReK.jpg', 'https://i.meee.com.tw/BFcRZlJ.jpg', 'https://i.meee.com.tw/Pc2u4J8.jpg', 'https://i.meee.com.tw/RnUITpD.jpg', 'https://i.meee.com.tw/Zb8FRRs.jpg', 'https://i.meee.com.tw/ZgqWbdW.jpg', 'https://i.meee.com.tw/JPuCVMj.jpg', 'https://i.meee.com.tw/cGxbgRL.jpg', 'https://i.meee.com.tw/WZ9HKOt.jpg', 'https://i.meee.com.tw/EAhkLPa.jpg', 'https://i.meee.com.tw/CHRCiwv.jpg', 'https://i.meee.com.tw/K4acoX3.jpg', 'https://i.meee.com.tw/AgqCwUG.jpg', 'https://i.meee.com.tw/IBiP9Xm.jpg', 'https://i.meee.com.tw/0pdENOw.jpg', 'https://i.meee.com.tw/wu2sbnG.jpg', 'https://i.meee.com.tw/fPwFyVD.jpg', 'https://i.meee.com.tw/VcFbdLs.jpg', 'https://i.meee.com.tw/qCtj1y3.jpg', 'https://i.meee.com.tw/IP97a5i.jpg', 'https://i.meee.com.tw/0gKJbSE.jpg', 'https://i.meee.com.tw/LHFUSDc.jpg', 'https://i.meee.com.tw/9udlrZt.jpg', 'https://i.meee.com.tw/63a3eGG.jpg', 'https://i.meee.com.tw/QLI0KOO.jpg', 'https://i.meee.com.tw/FBfCScg.jpg', 'https://i.meee.com.tw/HKrjhy2.jpg', 'https://i.meee.com.tw/nBHIUqX.jpg', 'https://i.meee.com.tw/vGQkP0l.jpg', 'https://i.meee.com.tw/npm2G9Y.jpg', 'https://i.meee.com.tw/3pEHph6.jpg', 'https://i.meee.com.tw/wbFC98x.jpg', 'https://i.meee.com.tw/s7uRU3X.jpg', 'https://i.meee.com.tw/GpmAtDL.jpg', 'https://i.meee.com.tw/lb7RCBk.jpg', 'https://i.meee.com.tw/BqGhZtG.jpg', 'https://i.meee.com.tw/OiaypWz.jpg', 'https://i.meee.com.tw/IBE84U7.jpg'
+            ] 
+        },
+        { 
+            name: 'JAMES', 
+            imgs: [
+                'https://i.meee.com.tw/CVBsBfd.jpg', 'https://i.meee.com.tw/xtAhmPX.jpg', 'https://i.meee.com.tw/3G5NxcV.jpg', 'https://i.meee.com.tw/kA8DG3b.jpg', 'https://i.meee.com.tw/VMDbJX7.jpg', 'https://i.meee.com.tw/agwNTow.jpg', 'https://i.meee.com.tw/Ipfv0L5.jpg', 'https://i.meee.com.tw/08xbMYK.jpg', 'https://i.meee.com.tw/BMFBEF9.jpg', 'https://i.meee.com.tw/443BjvM.jpg', 'https://i.meee.com.tw/NyCrZFY.jpg', 'https://i.meee.com.tw/nqHzylv.jpg', 'https://i.meee.com.tw/HdAbga0.jpg', 'https://i.meee.com.tw/tQ3LFv8.jpg', 'https://i.meee.com.tw/Pgf02by.jpg', 'https://i.meee.com.tw/tUHP9eq.jpg', 'https://i.meee.com.tw/cFAFXHL.jpg', 'https://i.meee.com.tw/iw81cbd.jpg', 'https://i.meee.com.tw/ovceTuk.jpg', 'https://i.meee.com.tw/7wCu2Ne.jpg', 'https://i.meee.com.tw/b9zN4u7.jpg', 'https://i.meee.com.tw/GatiyNi.jpg', 'https://i.meee.com.tw/09mgKIc.jpg', 'https://i.meee.com.tw/OhvD8d6.jpg', 'https://i.meee.com.tw/xmxsUOU.jpg', 'https://i.meee.com.tw/I9kGYfx.jpg', 'https://i.meee.com.tw/qOU6Jq5.jpg', 'https://i.meee.com.tw/WA6Owsw.jpg', 'https://i.meee.com.tw/i9oRArI.jpg', 'https://i.meee.com.tw/jPwvfEK.jpg', 'https://i.meee.com.tw/uWJs9sT.jpg', 'https://i.meee.com.tw/N3DAwqP.jpg', 'https://i.meee.com.tw/Ak8oEDk.jpg', 'https://i.meee.com.tw/N3J3tmF.jpg', 'https://i.meee.com.tw/Zni4ahH.jpg', 'https://i.meee.com.tw/OzvQZvK.jpg', 'https://i.meee.com.tw/oAhHC9H.jpg', 'https://i.meee.com.tw/YPibdR6.jpg', 'https://i.meee.com.tw/GGAf8Wh.jpg', 'https://i.meee.com.tw/AaNm91y.jpg', 'https://i.meee.com.tw/vnOtoNj.jpg'
+            ] 
+        },
+        { 
+            name: 'JUHOON', 
+            imgs: [
+                'https://i.meee.com.tw/NcdYMX7.jpg', 'https://i.meee.com.tw/J9lZu2w.jpg', 'https://i.meee.com.tw/2urGipe.jpg', 'https://i.meee.com.tw/Etfw5vh.jpg', 'https://i.meee.com.tw/XPZy2Ax.jpg', 'https://i.meee.com.tw/idAqO9Z.jpg', 'https://i.meee.com.tw/jG1kN6o.jpg', 'https://i.meee.com.tw/6k15xnq.jpg', 'https://i.meee.com.tw/ZuWz8u9.jpg', 'https://i.meee.com.tw/NiWzAif.jpg', 'https://i.meee.com.tw/XfHBS3X.jpg', 'https://i.meee.com.tw/QLDYDN5.jpg', 'https://i.meee.com.tw/RdO84FD.jpg', 'https://i.meee.com.tw/iYWyYIV.jpg', 'https://i.meee.com.tw/LyHeJwT.jpg', 'https://i.meee.com.tw/6Iu0lc0.jpg', 'https://i.meee.com.tw/cOiAmF3.jpg', 'https://i.meee.com.tw/CPNWL6a.jpg', 'https://i.meee.com.tw/F8KcTfr.jpg', 'https://i.meee.com.tw/thhW0yr.jpg', 'https://i.meee.com.tw/V7Fw2Fx.jpg', 'https://i.meee.com.tw/2RUrC2b.jpg', 'https://i.meee.com.tw/RtZyWdr.jpg', 'https://i.meee.com.tw/FpqvDsF.jpg', 'https://i.meee.com.tw/rcvG6eh.jpg', 'https://i.meee.com.tw/VkCgEja.jpg', 'https://i.meee.com.tw/7xURHqc.jpg', 'https://i.meee.com.tw/lGZ6xBQ.jpg', 'https://i.meee.com.tw/kqPD6I4.jpg', 'https://i.meee.com.tw/26CRqzz.jpg', 'https://i.meee.com.tw/hrxaA4d.jpg', 'https://i.meee.com.tw/GJcXP2N.jpg', 'https://i.meee.com.tw/ZbPgm5R.jpg', 'https://i.meee.com.tw/62oX3v0.jpg', 'https://i.meee.com.tw/Mqfwqov.jpg', 'https://i.meee.com.tw/T9M6c8T.jpg', 'https://i.meee.com.tw/QTcLlEG.jpg', 'https://i.meee.com.tw/L0hUH8u.jpg', 'https://i.meee.com.tw/9qdsKFy.jpg', 'https://i.meee.com.tw/1Dn8QUo.jpg', 'https://i.meee.com.tw/PYgaVcq.jpg',
+                'https://i.meee.com.tw/YvR226F.jpg', 'https://i.meee.com.tw/1IdLg4S.jpg', 'https://i.meee.com.tw/ErLs49o.jpg', 'https://i.meee.com.tw/husx8Dq.jpg', 'https://i.meee.com.tw/K6IR9yB.jpg', 'https://i.meee.com.tw/GpB4tTP.jpg', 'https://i.meee.com.tw/Amke524.jpg', 'https://i.meee.com.tw/ZHnFfuD.jpg', 'https://i.meee.com.tw/K0Q3Zk7.jpg', 'https://i.meee.com.tw/Xo5PIUE.jpg', 'https://i.meee.com.tw/FeXoANn.jpg', 'https://i.meee.com.tw/Ebm0NrV.jpg', 'https://i.meee.com.tw/tmYn8Oj.jpg', 'https://i.meee.com.tw/ScydKUc.jpg', 'https://i.meee.com.tw/utfFpEM.jpg', 'https://i.meee.com.tw/W1PhhsQ.jpg', 'https://i.meee.com.tw/NhJU1BN.jpg', 'https://i.meee.com.tw/Pu6Z5jy.jpg', 'https://i.meee.com.tw/KqcC0Cz.jpg', 'https://i.meee.com.tw/YVwBTKD.jpg', 'https://i.meee.com.tw/1XBpYVx.jpg', 'https://i.meee.com.tw/IKdX7QQ.jpg', 'https://i.meee.com.tw/DyTlxOr.jpg', 'https://i.meee.com.tw/Vc9GLcy.jpg', 'https://i.meee.com.tw/RDG0KYL.jpg', 'https://i.meee.com.tw/BEJVAjp.jpg', 'https://i.meee.com.tw/CeT6PFE.jpg', 'https://i.meee.com.tw/hGX7zQl.jpg', 'https://i.meee.com.tw/ehyVDWO.jpg', 'https://i.meee.com.tw/kpXdyd8.jpg'
+            ] 
+        },
+        { 
+            name: 'SEONGHYEON', 
+            imgs: [
+                'https://i.meee.com.tw/BIumaWw.jpg', 'https://i.meee.com.tw/1EVXMKA.jpg', 'https://i.meee.com.tw/ovZEBqB.jpg', 'https://i.meee.com.tw/stTT15O.jpg', 'https://i.meee.com.tw/4BkHrGv.jpg', 'https://i.meee.com.tw/IttS1Qk.jpg', 'https://i.meee.com.tw/zEEp4hj.jpg', 'https://i.meee.com.tw/Wmvt06M.jpg', 'https://i.meee.com.tw/HC1zIaI.jpg', 'https://i.meee.com.tw/48UcC4j.jpg', 'https://i.meee.com.tw/7bjuACv.jpg', 'https://i.meee.com.tw/4SA8Zfn.jpg', 'https://i.meee.com.tw/50ugDvH.jpg', 'https://i.meee.com.tw/R3gWDCJ.jpg', 'https://i.meee.com.tw/OxAENiY.jpg', 'https://i.meee.com.tw/PncXEQb.jpg', 'https://i.meee.com.tw/dFGOhkJ.jpg', 'https://i.meee.com.tw/wJ0yrIp.jpg', 'https://i.meee.com.tw/pvDLmWS.jpg', 'https://i.meee.com.tw/cBpEnL7.jpg', 'https://i.meee.com.tw/iGx6FU4.jpg', 'https://i.meee.com.tw/uVaK1ZC.jpg', 'https://i.meee.com.tw/Coe2Xji.jpg', 'https://i.meee.com.tw/rmLojta.jpg', 'https://i.meee.com.tw/fUyJ5uZ.jpg', 'https://i.meee.com.tw/pTTflJj.jpg', 'https://i.meee.com.tw/G9VS9NE.jpg', 'https://i.meee.com.tw/7RTGCmf.jpg', 'https://i.meee.com.tw/EgTENpf.jpg', 'https://i.meee.com.tw/ocU7do0.jpg', 'https://i.meee.com.tw/XdMepIA.jpg', 'https://i.meee.com.tw/MMlSVTC.jpg', 'https://i.meee.com.tw/4diqcVU.jpg', 'https://i.meee.com.tw/LobjZF4.jpg', 'https://i.meee.com.tw/E7m4FCB.jpg', 'https://i.meee.com.tw/l9T7qtd.jpg', 'https://i.meee.com.tw/DMGbGxW.jpg', 'https://i.meee.com.tw/zzR5FSh.jpg', 'https://i.meee.com.tw/bPUxjlO.jpg', 'https://i.meee.com.tw/DDetHVG.jpg', 'https://i.meee.com.tw/Lqddbrl.jpg'
+            ] 
+        },
+        { 
+            name: 'KEONHO', 
+            imgs: [
+                'https://i.meee.com.tw/RifsdWi.jpg', 'https://i.meee.com.tw/h6sBuPV.jpg', 'https://i.meee.com.tw/orrhHJ9.jpg', 'https://i.meee.com.tw/ulzgelY.jpg', 'https://i.meee.com.tw/hrasay4.jpg', 'https://i.meee.com.tw/KdBrKDx.jpg', 'https://i.meee.com.tw/us2KGpy.jpg', 'https://i.meee.com.tw/UwUBIUD.jpg', 'https://i.meee.com.tw/gF9niFB.jpg', 'https://i.meee.com.tw/CRHCpB1.jpg', 'https://i.meee.com.tw/BdkFp7E.jpg', 'https://i.meee.com.tw/EpSMghF.jpg', 'https://i.meee.com.tw/IiOHTxO.jpg', 'https://i.meee.com.tw/FKtO9gB.jpg', 'https://i.meee.com.tw/uvavWIW.jpg', 'https://i.meee.com.tw/ey4XbGj.jpg', 'https://i.meee.com.tw/yFoEH6Y.jpg', 'https://i.meee.com.tw/cyAyduB.jpg', 'https://i.meee.com.tw/pzm48tI.jpg', 'https://i.meee.com.tw/qGoDBGL.jpg', 'https://i.meee.com.tw/OvezIXK.jpg', 'https://i.meee.com.tw/lc2cvnR.jpg', 'https://i.meee.com.tw/6EIUcNn.jpg', 'https://i.meee.com.tw/EM9l1yO.jpg', 'https://i.meee.com.tw/7cDaWyU.jpg', 'https://i.meee.com.tw/VBOiyxl.jpg', 'https://i.meee.com.tw/7RhEFsO.jpg', 'https://i.meee.com.tw/gWFHTfh.jpg', 'https://i.meee.com.tw/PMSu76m.jpg', 'https://i.meee.com.tw/2TjeXdU.jpg', 'https://i.meee.com.tw/edDiacb.jpg', 'https://i.meee.com.tw/9Ss2EVA.jpg', 'https://i.meee.com.tw/leGjRQu.jpg', 'https://i.meee.com.tw/iRghcBx.jpg', 'https://i.meee.com.tw/sIHEA1v.jpg', 'https://i.meee.com.tw/Bo8qOPs.jpg', 'https://i.meee.com.tw/f9DcHTT.jpg', 'https://i.meee.com.tw/JIfMKy7.jpg', 'https://i.meee.com.tw/i95UGif.jpg', 'https://i.meee.com.tw/xkbTgyT.jpg', 'https://i.meee.com.tw/24EydLu.jpg'
+            ] 
+        }
+    ];
+
+    /* --- GLOBAL STATE --- */
+    let currentLang = localStorage.getItem('cortis_lang') || 'zh';
+    let userName = localStorage.getItem('cortis_user_name') || "";
+    // Collection: Array of Unlocked Image URLs
+    let collection = JSON.parse(localStorage.getItem('cortis_collection') || '[]');
+
+    // Daily Limit Logic
+    let dailyPullCount = parseInt(localStorage.getItem('cortis_daily_count') || '0');
+    let lastPullDate = localStorage.getItem('cortis_last_pull_date') || '';
+    const todayStr = new Date().toDateString();
+
+    if(lastPullDate !== todayStr) {
+        dailyPullCount = 0;
+        localStorage.setItem('cortis_daily_count', '0');
+        localStorage.setItem('cortis_last_pull_date', todayStr);
+    }
+
+    let state = 'IDLE'; // IDLE, DRAWN, PLAYING, END
+    let selectedMember = null;
+    let selectedImg = null;
+    let currentPullMsgIdx = 0;
+    let currentSuccessMsgIdx = 0;
+    let welcomeIdx = Math.floor(Math.random() * 3); 
+    
+    // Gallery State
+    let activeGalleryTab = 0; 
+
+    // Pull Logic
+    let startY = 0;
+    let currentDragY = 0;
+    let isDragging = false;
+    const initialBottomPct = -60; // Initial css bottom percentage
+    const successThreshold = -10; // If bottom > -10% (almost out), trigger success
+
+    const mainBtn = document.getElementById('main-btn'), redrawBtn = document.getElementById('redraw-btn');
+    const quoteBox = document.getElementById('quote'), appCont = document.getElementById('app-container');
+
+    /* --- UI FUNCTIONS --- */
+    function updateUI() {
+        const lang = i18n[currentLang];
+
+        // Modals
+        document.getElementById('modal-intro').innerHTML = lang.nameIntro;
+        document.getElementById('modal-prompt').innerText = lang.namePrompt;
+        document.getElementById('modal-btn').innerText = lang.nameBtn;
+        document.getElementById('user-name-input').placeholder = lang.namePlaceholder;
+        
+        // Gallery
+        document.getElementById('g-header-title').innerText = lang.galleryTitle;
+        document.getElementById('toast').innerText = lang.galleryLocked;
+        document.getElementById('pull-hint').innerText = lang.pullHint;
+
+        document.getElementById('title-main').innerText = lang.title;
+        document.getElementById('copy-text').innerHTML = lang.copyright;
+
+        // Language Classes
+        if (currentLang === 'zh') { appCont.classList.add('lang-zh'); appCont.classList.remove('lang-en'); } 
+        else { appCont.classList.add('lang-en'); appCont.classList.remove('lang-zh'); }
+
+        const displayUser = userName || (currentLang === 'zh' ? "朋友" : "Friend");
+        const userSpan = `&nbsp;<span class="user-clickable" onclick="resetUserName()">${displayUser}</span>&nbsp`;
+
+        // Main Button States
+        if (state === 'IDLE') {
+            mainBtn.classList.remove('btn-active-float');
+            redrawBtn.style.display = 'none';
+            
+            // Check Daily Limit
+            if (dailyPullCount >= 3) {
+                mainBtn.innerText = lang.limitBtn;
+                mainBtn.classList.add('btn-disabled');
+                quoteBox.innerText = lang.limitMsg;
+                mainBtn.onclick = null; // Disable click
+            } else {
+                let left = 3 - dailyPullCount;
+                mainBtn.innerText = lang.pullBtn.replace('{left}', left);
+                mainBtn.classList.remove('btn-disabled');
+                mainBtn.onclick = handleMain; // Enable click
+                
+                // Safe welcome index
+                let wIdx = welcomeIdx % lang.welcomeMsgs.length;
+                let msg = lang.welcomeMsgs[wIdx];
+                quoteBox.innerHTML = msg.replace("{user}", userSpan);             
+            }
+
+        } else if (state === 'DRAWN' || state === 'PLAYING') {
+            mainBtn.innerText = lang.breakBtn;
+            mainBtn.classList.add('btn-active-float'); 
+            redrawBtn.style.display = 'none'; // Hide redraw while pulling
+            let pIdx = currentPullMsgIdx % lang.pullMsgs.length;
+            const msg = lang.pullMsgs[pIdx]; 
+            quoteBox.innerText = msg;
+        } else if (state === 'END') {
+            // When finished, show Back Button (Secondary) instead of Pull Again immediately if limit reached?
+            // Actually rule says: if limit reached, lock it.
+            // If just finished a pull, we incremented count.
+            
+            mainBtn.style.display = 'none'; // Hide main button in result view to focus on card
+            
+            let sIdx = currentSuccessMsgIdx % lang.successMsgs.length;
+            let msg = lang.successMsgs[sIdx];
+            let formattedMsg = msg.replace("{user}", userSpan)
+                                .replace("{name}", selectedMember.name);
+            quoteBox.innerHTML = formattedMsg;
+            
+            redrawBtn.innerText = lang.backBtn;
+            redrawBtn.style.display = 'flex';
+        }
+    }
+
+    function toggleLanguage() {
+        currentLang = currentLang === 'zh' ? 'en' : 'zh';
+        localStorage.setItem('cortis_lang', currentLang); 
+        updateUI();
+        if(document.getElementById('gallery-view').classList.contains('active')){
+            if(document.getElementById('gallery-detail').classList.contains('active')){
+                updateGalleryHeader(members[activeGalleryTab]);
+            } else {
+                initGalleryHome();
+            }
+        }
+    }
+
+    /* --- GAME FLOW --- */
+    function handleMain() {
+        // Double check limit before pulling
+        if (dailyPullCount >= 3) return;
+        
+        if (state === 'IDLE') pull();
+    }
+
+    function pull() {
+        selectedMember = members[Math.floor(Math.random() * members.length)];
+        selectedImg = selectedMember.imgs[Math.floor(Math.random() * selectedMember.imgs.length)];
+
+        // Preload
+        const imgPreload = new Image();
+        imgPreload.src = selectedImg;
+
+        currentPullMsgIdx = Math.floor(Math.random() * i18n[currentLang].pullMsgs.length);
+
+        initPullScene();
+        
+        state = 'DRAWN';
+        updateUI();
+    }
+
+    // Renamed handleRedraw to resetGame since redraw is gone
+    function resetGame() {
+        state = 'IDLE';
+        mainBtn.style.display = 'flex'; // Show main button again
+        
+        // Show Overlay again
+        document.getElementById('overlay').style.display = 'flex';
+        
+        // Hide Scenes
+        document.getElementById('pull-scene').classList.remove('active');
+        document.getElementById('success-view').classList.remove('active');
+        
+        // Remove old sparkles
+        const oldSparkle = document.querySelector('.sparkle-overlay');
+        if (oldSparkle) oldSparkle.remove();
+
+        welcomeIdx = Math.floor(Math.random() * 10);
+        updateUI();
+    }
+
+    /* --- PULL MECHANIC --- */
+    function initPullScene() {
+        // Hide overlay to prevent blocking touches
+        document.getElementById('overlay').style.display = 'none';
+    
+        const pullScene = document.getElementById('pull-scene');
+        pullScene.classList.add('active');
+        
+        const cardContainer = document.getElementById('pull-card-container');
+        const cardImg = document.getElementById('pull-card-img');
+        
+        // Reset Position
+        cardContainer.style.bottom = initialBottomPct + "%";
+        cardContainer.classList.remove('extracted', 'snap-back');
+        
+        // Set Image
+        cardImg.style.backgroundImage = `url('${selectedImg}')`;
+        
+        // Reset Pull Logic
+        isDragging = false;
+        
+        // Attach Events to the card container
+        cardContainer.addEventListener('mousedown', dragStart);
+        cardContainer.addEventListener('touchstart', dragStart, {passive: false});
+        
+        window.addEventListener('mousemove', dragMove);
+        window.addEventListener('touchmove', dragMove, {passive: false});
+        
+        window.addEventListener('mouseup', dragEnd);
+        window.addEventListener('touchend', dragEnd);
+    }
+
+    function dragStart(e) {
+        if (state !== 'DRAWN' && state !== 'PLAYING') return;
+        state = 'PLAYING';
+        isDragging = true;
+        startY = e.touches ? e.touches[0].clientY : e.clientY;
+        
+        const cardContainer = document.getElementById('pull-card-container');
+        cardContainer.classList.remove('snap-back'); // Disable transition for direct control
+        
+        // Hide hint
+        document.getElementById('pull-hint').style.display = 'none';
+    }
+
+    function dragMove(e) {
+        if (!isDragging) return;
+        e.preventDefault(); // Prevent scroll
+        
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const deltaY = startY - clientY; // Positive = Moving Up
+        
+        // Convert pixels to % roughly based on window height
+        const winHeight = document.getElementById('card-window').clientHeight;
+        const deltaPct = (deltaY / winHeight) * 100;
+        
+        // Current Bottom = Initial + Delta
+        // Limit: Can't go below initial
+        let newBottom = initialBottomPct + deltaPct;
+        if (newBottom < initialBottomPct) newBottom = initialBottomPct;
+        
+        const cardContainer = document.getElementById('pull-card-container');
+        cardContainer.style.bottom = newBottom + "%";
+    }
+
+    function dragEnd(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        
+        const cardContainer = document.getElementById('pull-card-container');
+        // Check current style bottom
+        const currentBottom = parseFloat(cardContainer.style.bottom);
+        
+        if (currentBottom > successThreshold) {
+            // Success! Pull out completely
+            finishPull();
+        } else {
+            // Snap back
+            cardContainer.classList.add('snap-back');
+            cardContainer.style.bottom = initialBottomPct + "%";
+            // Show hint again
+            setTimeout(() => {
+                if(state === 'PLAYING') document.getElementById('pull-hint').style.display = 'block';
+            }, 400);
+        }
+    }
+
+    function finishPull() {
+        // Remove listeners
+        const cardContainer = document.getElementById('pull-card-container');
+        cardContainer.removeEventListener('mousedown', dragStart);
+        cardContainer.removeEventListener('touchstart', dragStart);
+        window.removeEventListener('mousemove', dragMove);
+        window.removeEventListener('touchmove', dragMove);
+        window.removeEventListener('mouseup', dragEnd);
+        window.removeEventListener('touchend', dragEnd);
+
+        // Animate out
+        cardContainer.classList.add('extracted');
+        cardContainer.style.bottom = "120%"; // Fly up and out
+        
+        // Commit Pull Count Here
+        dailyPullCount++;
+        localStorage.setItem('cortis_daily_count', dailyPullCount);
+        
+        // Trigger Success View after slight delay
+        setTimeout(() => {
+            document.getElementById('pull-scene').classList.remove('active');
+            
+            const successView = document.getElementById('success-view');
+            successView.classList.add('active');
+            
+            const finalCard = document.getElementById('final-card-img');
+            finalCard.style.backgroundImage = `url('${selectedImg}')`;
+            
+            // Add sparkles
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle-overlay';
+            document.getElementById('card-window').appendChild(sparkle);
+            
+            currentSuccessMsgIdx = Math.floor(Math.random() * i18n[currentLang].successMsgs.length);
+            unlockImage(selectedImg);
+            
+            state = 'END';
+            updateUI();
+        }, 300);
+    }
+
+
+    /* --- GALLERY LOGIC --- */
+    function unlockImage(url) {
+        if (!collection.includes(url)) {
+            collection.push(url);
+            localStorage.setItem('cortis_collection', JSON.stringify(collection));
+        }
+    }
+
+    function toggleGallery(show) {
+        const view = document.getElementById('gallery-view');
+        if (show) {
+            view.classList.add('active');
+            backToGalleryHome(); // Always reset to home when opening
+        } else {
+            view.classList.remove('active');
+        }
+    }
+
+    function initGalleryHome() {
+        // Set Hero Image
+        const heroContainer = document.getElementById('gallery-hero-container');
+        heroContainer.innerHTML = `
+            <div class="gallery-hero" style="background-image: url('https://i.meee.com.tw/fyWyQH7.jpg')">
+                <div class="hero-content">
+                    <h2>CORTIS</h2>
+                    <p>Official Collection</p>
+                </div>
+            </div>
+        `;
+
+        const container = document.getElementById('member-list-container');
+        container.innerHTML = '';
+        
+        document.getElementById('g-header-sub').innerText = i18n[currentLang].gallerySub;
+
+        members.forEach((member, index) => {
+            // Calculate stats
+            let collected = 0;
+            member.imgs.forEach(url => { if (collection.includes(url)) collected++; });
+            
+            const card = document.createElement('div');
+            card.className = 'member-card';
+            card.onclick = () => openMemberGallery(index);
+            
+            const labelCollected = i18n[currentLang].galleryCollected;
+            
+            card.innerHTML = `
+                <div class="m-info">
+                    <div class="m-name">${member.name}</div>
+                    <div class="m-stats">${labelCollected}: ${collected} / ${member.imgs.length}</div>
+                </div>
+                <div class="m-arrow">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+    
+    function openMemberGallery(index) {
+        activeGalleryTab = index;
+        const member = members[index];
+        
+        // Animations
+        document.getElementById('gallery-home').style.transform = 'translateX(-20%)';
+        document.getElementById('gallery-home').style.opacity = '0';
+        
+        const detail = document.getElementById('gallery-detail');
+        detail.classList.add('active');
+        
+        // Header updates
+        updateGalleryHeader(member);
+        
+        // Toggle controls
+        document.getElementById('g-ctrl-home').style.display = 'none';
+        document.getElementById('g-ctrl-back').style.display = 'block';
+        
+        renderGalleryGrid(member);
+    }
+    
+    function backToGalleryHome() {
+        // Reset animations
+        document.getElementById('gallery-home').style.transform = 'translateX(0)';
+        document.getElementById('gallery-home').style.opacity = '1';
+        
+        const detail = document.getElementById('gallery-detail');
+        detail.classList.remove('active');
+        
+        // Controls
+        document.getElementById('g-ctrl-home').style.display = 'block';
+        document.getElementById('g-ctrl-back').style.display = 'none';
+        
+        initGalleryHome();
+    }
+    
+    function updateGalleryHeader(member) {
+        let collected = 0;
+        member.imgs.forEach(url => { if (collection.includes(url)) collected++; });
+        
+        document.getElementById('g-header-title').innerText = member.name;
+        document.getElementById('g-header-sub').innerText = `${collected} / ${member.imgs.length}`;
+    }
+
+    function renderGalleryGrid(member) {
+        const grid = document.getElementById('gallery-grid');
+        grid.innerHTML = '';
+        
+        member.imgs.forEach(url => {
+            const isUnlocked = collection.includes(url);
+            
+            const item = document.createElement('div');
+            // Add gloss-effect class if unlocked
+            item.className = `g-item ${isUnlocked ? 'unlocked gloss-effect' : 'locked'}`;
+            
+            // Check if just unlocked
+            if (isUnlocked && selectedImg === url && state === 'END') {
+                item.classList.add('just-unlocked');
+            }
+
+            const img = document.createElement('img');
+            img.className = 'g-img';
+            img.loading = "lazy";
+            img.src = url;
+            
+            item.appendChild(img);
+
+            if (!isUnlocked) {
+                const lockOverlay = document.createElement('div');
+                lockOverlay.className = 'g-lock-icon';
+                lockOverlay.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>`;
+                item.appendChild(lockOverlay);
+                
+                // Click event for locked
+                item.onclick = () => showToast();
+            } else {
+                // Click event for unlocked
+                item.onclick = () => openPreview(url);
+                
+                const badge = document.createElement('div');
+                badge.className = 'new-badge';
+                badge.innerText = "NEW";
+                item.appendChild(badge);
+            }
+
+            grid.appendChild(item);
+        });
+    }
+    
+    function showToast() {
+        const toast = document.getElementById('toast');
+        toast.innerText = i18n[currentLang].galleryLocked;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2000);
+    }
+
+    /* --- PREVIEW (LIGHTBOX) FUNCTIONS --- */
+    function openPreview(url) {
+        const modal = document.getElementById('image-preview-modal');
+        const img = document.getElementById('preview-img');
+        img.src = url;
+        modal.classList.add('active');
+    }
+
+    function closePreview() {
+        const modal = document.getElementById('image-preview-modal');
+        modal.classList.remove('active');
+    }
+
+    /* --- USER NAME LOGIC --- */
+    function checkName() {
+        const modal = document.getElementById('name-modal');
+        if (!userName) {
+            modal.classList.add('show');
+            modal.style.display = 'flex';
+        } else {
+            modal.style.display = 'none';
+        }
+    }
+
+    function saveName() {
+        const input = document.getElementById('user-name-input');
+        const val = input.value.trim();
+        if (!val) return;
+        
+        userName = val;
+        localStorage.setItem('cortis_user_name', userName);
+
+        const modal = document.getElementById('name-modal');
+        modal.classList.remove('show');
+        setTimeout(() => {
+            modal.style.display = 'none';
+            updateUI(); 
+        }, 300);
+    }
+
+    function resetUserName() {
+        const modal = document.getElementById('name-modal');
+        const input = document.getElementById('user-name-input');
+        
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.add('show');
+            input.value = userName;
+            input.focus();
+        }, 10);
+    }
+
+    /* --- BOOT --- */
+    document.addEventListener('gesturestart', (e) => e.preventDefault());
+    
+    // Global touch fix
+    document.body.addEventListener('touchmove', function(e) {
+        // Prevent default only if we are not scrolling gallery
+        if(!e.target.closest('.g-page') && !e.target.closest('#pull-scene')) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    window.onload = () => {
+        checkName(); 
+        updateUI(); 
+    };
+</script>
+</body>
+</html>
