@@ -13,6 +13,9 @@
             --switch-bg: #f0f0f0;
             --accent: #dcae96;
             --gold: #FFD700;
+            --gold-dark: #B8860B;
+            --dark-bg: #121212;
+            --dark-panel: #1e1e1e;
             --disabled: #a0a0a0;
         }
 
@@ -41,7 +44,7 @@
             padding: 5px 5px 0px; flex-shrink: 0; height: 45px;
         }
 
-        .header-side { flex: 1; display: flex; align-items: center; }
+        .header-side { flex: 1; display: flex; align-items: center; gap: 8px; }
         .header-side.right { justify-content: flex-end; gap: 10px; }
 
         header h1 { 
@@ -52,31 +55,21 @@
 
         /* --- Language Switcher --- */
         .lang-switch-pill {
-            position: relative;
-            width: 58px; 
-            height: 28px; 
-            background: var(--switch-bg);
-            border-radius: 14px; 
-            display: flex;
-            align-items: center; 
-            cursor: pointer; 
-            padding: 2px;
-            border: 1px solid #e5e5e5; 
-            user-select: none;
+            position: relative; width: 58px; height: 28px; 
+            background: var(--switch-bg); border-radius: 14px; 
+            display: flex; align-items: center; cursor: pointer; 
+            padding: 2px; border: 1px solid #e5e5e5; user-select: none;
         }
-
         .lang-switch-pill span {
             flex: 1; font-size: 0.65rem; font-weight: 800; z-index: 2;
             color: #aaa; transition: color 0.3s; text-align: center;
         }
-
         .pill-thumb {
             position: absolute; width: 24px; height: 22px;
             background: #fff; border-radius: 12px; left: 2px;
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 1px 3px rgba(0,0,0,0.1); z-index: 1;
         }
-
         .app.lang-zh .pill-thumb { transform: translateX(0px); }
         .app.lang-zh #label-zh { color: var(--mid-grey); }
         .app.lang-zh #label-en { color: #aaa; }
@@ -84,31 +77,25 @@
         .app.lang-en #label-en { color: var(--mid-grey); }
         .app.lang-en #label-zh { color: #aaa; }
 
-        /* --- Gallery Button --- */
-        .gallery-btn {
+        /* --- Gallery & Favorites Buttons --- */
+        .icon-btn {
             width: 32px; height: 32px;
             display: flex; align-items: center; justify-content: center;
-            border-radius: 50%;
-            background: var(--light-grey);
-            color: var(--mid-grey);
-            border: none; cursor: pointer;
-            transition: background 0.2s;
+            border-radius: 50%; background: var(--light-grey);
+            color: var(--mid-grey); border: none; cursor: pointer;
+            transition: all 0.2s;
         }
-        .gallery-btn svg { width: 18px; height: 18px; fill: currentColor; }
-        .gallery-btn:active { background: #e0e0e0; }
+        .icon-btn:active { transform: scale(0.9); background: #e0e0e0; }
+        .icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
+        
+        .fav-btn { color: var(--gold-dark); background: #fff8e1; }
+        .fav-btn svg { fill: var(--gold); }
 
         /* --- Main Content --- */
         #quote { 
-            font-size: 0.85rem; 
-            color: #747373; 
-            margin-top: 5px;
-            font-weight: 600; 
-            line-height: 1.4;
-            min-height: 3em;
-            display: block;
-            text-align: center;
-            padding: 0 20px; 
-            flex-shrink: 0;
+            font-size: 0.85rem; color: #747373; margin-top: 5px;
+            font-weight: 600; line-height: 1.4; min-height: 3em;
+            display: block; text-align: center; padding: 0 20px; flex-shrink: 0;
         }
 
         main {
@@ -124,24 +111,19 @@
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* --- PULL SCENE STYLES --- */
+        /* --- PULL SCENE --- */
         #pull-scene {
-            position: absolute; inset: 0; 
-            overflow: hidden;
-            display: none; 
-            z-index: 200; 
+            position: absolute; inset: 0; overflow: hidden;
+            display: none; z-index: 200; 
         }
         #pull-scene.active { display: block; }
 
         #pull-card-container {
             position: absolute; left: 50%; width: 85%; height: 90%; 
             transform: translate(-50%, 0); z-index: 5;
-            bottom: -60%; 
-            transition: transform 0.1s linear; 
-            will-change: bottom; cursor: grab;
-            touch-action: none; 
+            bottom: -60%; transition: transform 0.1s linear; 
+            will-change: bottom; cursor: grab; touch-action: none; 
         }
-        
         #pull-card-container.snap-back { transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         #pull-card-container.extracted { transition: bottom 0.6s cubic-bezier(0.23, 1, 0.32, 1), transform 0.6s ease; }
 
@@ -157,8 +139,7 @@
             z-index: 10; border-top: 2px solid #555;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
-            border-radius: 0 0 15px 15px; 
-            pointer-events: none; 
+            border-radius: 0 0 15px 15px; pointer-events: none; 
         }
         .sleeve::before {
             content: ""; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
@@ -171,18 +152,15 @@
             letter-spacing: 5px; pointer-events: none; user-select: none;
         }
 
-        /* Success State Display */
+        /* Success State */
         #success-view {
             position: absolute; inset: 0; display: none; 
-            align-items: center; justify-content: center;
-            z-index: 220; 
+            align-items: center; justify-content: center; z-index: 220; 
         }
         #success-view.active { display: flex; }
-        
         .final-card {
-            width: 100%; height: 100%;
-            background-size: cover; background-position: center;
-            position: relative; overflow: hidden;
+            width: 100%; height: 100%; background-size: cover; 
+            background-position: center; position: relative; overflow: hidden;
         }
 
         #overlay {
@@ -191,7 +169,6 @@
             display: flex; align-items: center; justify-content: center;
             perspective: 1000px; transition: opacity 0.4s ease;
         }
-
         .card { width: 160px; height: 240px; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
         .card.flipped { transform: rotateY(180deg); }
         .card-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; border: 1.5px solid var(--mid-grey); display: flex; align-items: center; justify-content: center; }
@@ -214,34 +191,68 @@
         /* --- Footer --- */
         footer { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; padding: 10px 0 15px; }
         .btn-group { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; min-height: 110px; }
-        
         .btn-base { 
             width: 80%; max-width: 220px; height: 48px; border-radius: 50px; 
             font-weight: 800; font-size: 0.9rem; cursor: pointer; 
             display: flex; align-items: center; justify-content: center; 
             transition: 0.2s; border: none; 
         }
-        
         .btn-primary { background: var(--mid-grey); color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        .btn-disabled {
-            background: var(--disabled) !important;
-            color: #fff !important;
-            cursor: default !important;
-            box-shadow: none !important;
-            animation: none !important;
-        }
-
-        /* Updated secondary button styles (for Finish state) */
+        .btn-disabled { background: var(--disabled) !important; color: #fff !important; cursor: default !important; box-shadow: none !important; animation: none !important; }
         .btn-secondary { background: #fff; color: var(--mid-grey); border: 2px solid var(--mid-grey); }
         .hidden-all { opacity: 0 !important; pointer-events: none !important; }
         @keyframes breathing-float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); background-color: #555; } }
         .btn-active-float { animation: breathing-float 2s ease-in-out infinite; }
-
         .copyright { margin-top: 10px; font-size: 0.55rem; color: #bbb; text-align: center; line-height: 1.4; padding: 0 20px; }
         .footer-link { color: #aaa; text-decoration: underline; }
 
-        /* --- Modals & Hints --- */
+        /* --- LOGIN MODAL V2 --- */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 3000; 
+            display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.5s ease;
+            overflow: hidden; 
+        }
+        .modal-overlay.show { opacity: 1; }
+
+        #login-bg { position: absolute; inset: 0; z-index: -1; background: #f8f8f8; }
+        .bg-particles { background: linear-gradient(135deg, #e0e0e0 0%, #ffffff 100%); }
+        .particle {
+            position: absolute; border-radius: 50%; background: rgba(255,255,255,0.6);
+            box-shadow: 0 0 10px rgba(0,0,0,0.05); animation: float-particle 10s infinite linear;
+        }
+        @keyframes float-particle { 0% { transform: translateY(0) rotate(0deg); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; } }
+        .bg-gradient {
+            background: linear-gradient(-45deg, #f3f3f3, #e8e8e8, #f8f8f8, #ffffff);
+            background-size: 400% 400%; animation: gradient-flow 15s ease infinite;
+        }
+        @keyframes gradient-flow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .bg-emojis { background: #f9f9f9; }
+        .emoji-float {
+            position: absolute; font-size: 2rem; opacity: 0.15;
+            animation: float-emoji 8s infinite ease-in-out; filter: grayscale(100%);
+        }
+        @keyframes float-emoji { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        .name-box { 
+            width: 85%; max-width: 340px; text-align: center; 
+            background: rgba(255, 255, 255, 0.92); padding: 40px 25px; border-radius: 30px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.8); transform: translateY(20px); opacity: 0; animation: slide-up 0.6s 0.3s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        @keyframes slide-up { to { transform: translateY(0); opacity: 1; } }
+        .name-box h2 { margin: 0 0 15px; font-weight: 900; letter-spacing: 2px; color: var(--mid-grey); }
+        .modal-intro { font-size: 0.9rem; color: #666; line-height: 1.6; margin-bottom: 25px; font-weight: 500; }
+        .modal-prompt { font-size: 0.85rem; color: var(--mid-grey); margin-bottom: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        #user-name-input { 
+            background: #fff; border: 2px solid #eee; width: 100%; padding: 14px 20px; 
+            border-radius: 50px; font-size: 1rem; text-align: center; outline: none; 
+            margin-bottom: 25px; transition: all 0.3s; font-weight: 600; color: var(--grey);
+        }
+        #user-name-input:focus { border-color: var(--mid-grey); box-shadow: 0 0 0 4px rgba(0,0,0,0.05); }
+        #modal-btn { width: 100%; height: 52px; background: var(--mid-grey); color: #fff; border: none; border-radius: 50px; font-weight: 800; font-size: 0.95rem; cursor: pointer; letter-spacing: 1px; transition: transform 0.2s; }
+        #modal-btn:active { transform: scale(0.98); }
+
         .hint-text {
             position: absolute; bottom: 80px; width: 100%; text-align: center;
             color: rgba(255,255,255,0.6); font-size: 0.7rem; font-weight: 600;
@@ -249,48 +260,34 @@
         }
         @keyframes pulse-hint { 0%,100%{opacity: 0.5; transform: translateY(0);} 50%{opacity: 1; transform: translateY(-5px);} }
 
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(255, 255, 255, 0.95);
-            z-index: 3000; display: none; align-items: center; justify-content: center;
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            opacity: 0; transition: opacity 0.3s;
-        }
-        .modal-overlay.show { opacity: 1; }
-        .name-box { width: 85%; max-width: 340px; text-align: center; background: #fff; padding: 35px 25px; border-radius: 30px; box-shadow: 0 15px 50px rgba(0,0,0,0.12); }
-        .name-box h2 { margin: 0 0 10px; font-weight: 900; letter-spacing: 2px; color: var(--mid-grey); }
-        .modal-intro { font-size: 0.85rem; color: #888; line-height: 1.5; margin-bottom: 20px; font-weight: 500; }
-        .modal-prompt { font-size: 0.85rem; color: var(--mid-grey); margin-bottom: 20px; font-weight: 800; }
-        #user-name-input { background: #f9f9f9; border: 2px solid #eee; width: 100%; padding: 12px 20px; border-radius: 50px; font-size: 0.8rem; text-align: center; outline: none; margin-bottom: 20px; transition: border-color 0.3s; }
-        #user-name-input:focus { border-color: var(--mid-grey); }
-        #modal-btn { width: 100%; height: 50px; background: var(--mid-grey); color: #fff; border: none; border-radius: 50px; font-weight: 800; font-size: 0.85rem; cursor: pointer; }
         .user-clickable { color: var(--mid-grey); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-weight: 900; transition: opacity 0.2s; display: inline; }
         .user-clickable:hover { opacity: 0.6; }
 
-        /* --- GALLERY STYLES (UPDATED) --- */
-        #gallery-view {
-            position: fixed; inset: 0; background: #fafafa; z-index: 2000;
+        /* --- OFFICIAL GALLERY STYLES --- */
+        .g-view-overlay {
+            position: fixed; inset: 0; z-index: 2000;
             display: flex; flex-direction: column;
             transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        #gallery-view.active { transform: translateY(0); }
+        .g-view-overlay.active { transform: translateY(0); }
+        
+        #gallery-view { background: #fafafa; }
         
         .gallery-header {
-            padding: 15px 20px;
-            display: flex; align-items: center; justify-content: space-between;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #f0f0f0;
-            flex-shrink: 0; height: 60px;
-            position: sticky; top: 0; z-index: 10;
+            padding: 15px 20px; display: flex; align-items: center;
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);
+            border-bottom: 1px solid #f0f0f0; flex-shrink: 0; height: 60px;
+            position: sticky; top: 0; z-index: 10; gap: 10px;
         }
         
-        .gallery-title-group { display: flex; flex-direction: column; }
+        .gallery-title-group { display: flex; flex-direction: column; flex: 1; }
         .g-title-main { font-weight: 900; font-size: 1.1rem; color: var(--mid-grey); line-height: 1; }
         .g-title-sub { font-size: 0.7rem; color: #aaa; font-weight: 600; margin-top: 4px; }
 
         .close-gallery-btn, .back-gallery-btn {
             background: none; border: none; font-size: 1.5rem; color: var(--grey);
-            cursor: pointer; padding: 5px; display: flex; align-items: center;
+            cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center;
+            flex: 0 0 auto;
         }
         
         .gallery-container { flex: 1; overflow: hidden; position: relative; }
@@ -300,122 +297,197 @@
             padding-bottom: 40px;
         }
         
-        /* New Gallery Hero Section */
+        /* Gallery Hero */
         .gallery-hero {
             width: 100%; aspect-ratio: 16/9;
             background-size: cover; background-position: center;
-            position: relative; margin-bottom: 20px;
+            position: relative; margin-bottom: 15px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
-        .gallery-hero::after {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-        }
-        .hero-content {
-            position: absolute; bottom: 15px; left: 20px; z-index: 2; color: #fff;
-        }
+        .gallery-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); }
+        .hero-content { position: absolute; bottom: 15px; left: 20px; z-index: 2; color: #fff; }
         .hero-content h2 { margin: 0; font-weight: 900; letter-spacing: 2px; font-size: 1.5rem; }
         .hero-content p { margin: 5px 0 0; font-size: 0.75rem; opacity: 0.9; font-weight: 500; }
 
-        /* Updated Member List Styling */
-        .member-list { 
-            display: flex; flex-direction: column; gap: 15px; padding: 0 20px 40px; 
-        }
-        
+        .member-list { display: flex; flex-direction: column; gap: 15px; padding: 0 20px 40px; }
         .member-card {
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 16px; padding: 20px;
-            display: flex; align-items: center; justify-content: space-between;
-            cursor: pointer; 
-            border: 1px solid rgba(255,255,255,0.6);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            transition: all 0.2s ease;
-            position: relative; overflow: hidden;
+            background: rgba(255, 255, 255, 0.8); border-radius: 16px; padding: 20px;
+            display: flex; align-items: center; justify-content: space-between; cursor: pointer; 
+            border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            transition: all 0.2s ease; position: relative; overflow: hidden;
         }
         .member-card:active { transform: scale(0.98); }
-        .member-card::before {
-            content: ""; position: absolute; left: 0; top: 0; width: 4px; height: 100%;
-            background: var(--mid-grey); opacity: 0; transition: opacity 0.2s;
-        }
+        .member-card::before { content: ""; position: absolute; left: 0; top: 0; width: 4px; height: 100%; background: var(--mid-grey); opacity: 0; transition: opacity 0.2s; }
         .member-card:hover::before { opacity: 1; }
-
         .m-info { display: flex; flex-direction: column; gap: 4px; z-index: 1; }
         .m-name { font-weight: 800; font-size: 1.1rem; color: var(--mid-grey); letter-spacing: 1px; }
         .m-stats { font-size: 0.75rem; color: #999; font-weight: 600; text-transform: uppercase; }
         .m-arrow { color: #ddd; }
 
-        /* Grid for Detail Page */
-        #gallery-detail { 
-            transform: translateX(100%); pointer-events: none; opacity: 0; 
-            padding: 20px; background: #fff;
-        }
+        /* Detail Grid */
+        #gallery-detail { transform: translateX(100%); pointer-events: none; opacity: 0; padding: 20px; background: #fff; }
         #gallery-detail.active { transform: translateX(0); pointer-events: auto; opacity: 1; }
-        
-        .g-grid {
-            display: grid; grid-template-columns: repeat(7, 1fr); 
-            gap: 5px; align-content: start;
-            padding-bottom: 80px;
-        }
-
-        .g-item {
-            aspect-ratio: 2/3; position: relative; border-radius: 6px; overflow: hidden;
-            background: #f0f0f0; transition: transform 0.2s; border: 1px solid #eee;
-        }
+        .g-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; align-content: start; padding-bottom: 80px; }
+        .g-item { aspect-ratio: 2/3; position: relative; border-radius: 6px; overflow: hidden; background: #f0f0f0; transition: transform 0.2s; border: 1px solid #eee; }
         .g-item.unlocked { border: 1px solid #ccc; }
         .g-item:active { transform: scale(0.96); }
         .g-img { width: 100%; height: 100%; object-fit: cover; transition: filter 0.3s; }
         .g-item.locked .g-img { filter: blur(4px) grayscale(100%); opacity: 0.4; }
-        .g-lock-icon {
-            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-            color: #555; opacity: 0; pointer-events: none;
-        }
+        .g-lock-icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #555; opacity: 0; pointer-events: none; }
         .g-item.locked .g-lock-icon { opacity: 0.8; }
         .g-lock-icon svg { width: 16px; height: 16px; }
-        .new-badge {
-            position: absolute; top: 2px; right: 2px; background: #ff4757; 
-            width: 6px; height: 6px; border-radius: 50%; box-shadow: 0 0 0 1px #fff;
-            display: none; padding: 0;
-        }
+        .new-badge { position: absolute; top: 2px; right: 2px; background: #ff4757; width: 6px; height: 6px; border-radius: 50%; box-shadow: 0 0 0 1px #fff; display: none; padding: 0; }
         .g-item.just-unlocked .new-badge { display: block; }
 
-        /* --- PREVIEW MODAL --- */
-        #image-preview-modal {
-            position: fixed; inset: 0; z-index: 4000; background: rgba(0,0,0,0.9);
-            display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease;
+        /* Pin Button & Note Indicator */
+        .pin-btn {
+            position: absolute; bottom: 2px; right: 2px; width: 18px; height: 18px; border-radius: 50%;
+            background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center;
+            border: none; cursor: pointer; z-index: 5; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            opacity: 0; transition: opacity 0.2s;
         }
+        .g-item.unlocked:hover .pin-btn, .g-item.pinned .pin-btn { opacity: 1; }
+        .pin-btn svg { width: 10px; height: 10px; fill: #ccc; transition: fill 0.2s; }
+        .g-item.pinned .pin-btn svg { fill: var(--gold); }
+        .g-item.pinned { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+        
+        .note-indicator {
+            position: absolute; bottom: 2px; left: 2px; 
+            font-size: 10px; pointer-events: none; display: none;
+        }
+        .has-note .note-indicator { display: block; }
+
+        /* --- FAVORITES VIEW (VIP CABINET - IG STYLE) --- */
+        #favorites-view { background: var(--dark-bg); color: #fff; }
+        #favorites-view .gallery-header { background: rgba(30, 30, 30, 0.95); border-bottom: 1px solid #333; }
+        #favorites-view .g-title-main { color: var(--gold); letter-spacing: 1px; }
+        #favorites-view .g-title-sub { color: #888; }
+        #favorites-view .close-gallery-btn { color: #fff; }
+
+        /* Profile Header */
+        .fav-profile {
+            padding: 20px 20px 15px; 
+            border-bottom: 1px solid #333; margin-bottom: 20px;
+        }
+        .fav-profile-top {
+            display: flex; align-items: center; gap: 20px; margin-bottom: 15px;
+        }
+        .fav-avatar-container {
+            position: relative; width: 70px; height: 70px; flex-shrink: 0;
+        }
+        .fav-avatar {
+            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+            border: 2px solid var(--gold); cursor: pointer;
+        }
+        .fav-avatar-edit {
+            position: absolute; bottom: 0; right: 0; width: 22px; height: 22px;
+            background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            pointer-events: none; border: 1px solid #333; font-size: 12px;
+        }
+        .fav-info { flex: 1; min-width: 0; }
+        .fav-name { font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+        
+        /* Bio Input */
+        #fav-bio-input {
+            width: 100%; background: transparent; border: none; color: #ddd;
+            font-size: 0.9rem; font-family: inherit; resize: none; overflow: hidden;
+            outline: none; padding: 0; margin-top: 2px;
+        }
+        #fav-bio-input::placeholder { color: #555; font-style: italic; }
+
+        /* Member Stats Grid */
+        .fav-member-stats {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px;
+        }
+        .stat-pill {
+            background: #333; padding: 2px 8px; border-radius: 4px;
+            font-size: 0.7rem; color: #ccc; font-weight: 600;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .stat-pill span { color: var(--gold); }
+        #avatar-input { display: none; }
+
+        /* 5-Column Grid */
+        .cabinet-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; 
+            padding: 0 15px 80px; align-content: start;
+        }
+        .cab-slot {
+            aspect-ratio: 2/3; background: var(--dark-panel); 
+            border-radius: 6px; position: relative; overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            border: 1px solid #333; transition: transform 0.2s;
+        }
+        
+        .cab-slot.empty {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: #444; font-size: 0.6rem;
+        }
+        
+        .cab-slot.filled {
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+            border: 1.5px solid var(--gold);
+        }
+        
+        .cab-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .cab-slot.filled::after {
+            content: ""; position: absolute; top: 0; left: -150%; width: 150%; height: 100%;
+            background: linear-gradient(115deg, transparent 30%, rgba(255, 215, 0, 0.2) 45%, rgba(255, 255, 255, 0.4) 50%, rgba(255, 215, 0, 0.2) 55%, transparent 70%);
+            transform: skewX(-20deg); animation: gloss-sweep 5s infinite ease-in-out; pointer-events: none;
+        }
+        .cab-note-icon {
+            position: absolute; bottom: 2px; right: 2px; font-size: 8px;
+            text-shadow: 0 1px 2px black;
+        }
+
+        /* --- PREVIEW MODAL & NOTE --- */
+        #image-preview-modal { position: fixed; inset: 0; z-index: 4000; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
         #image-preview-modal.active { display: flex; opacity: 1; }
-        #preview-img {
-            max-width: 95vw; max-height: 90vh; border-radius: 4px; 
-            box-shadow: 0 0 30px rgba(0,0,0,0.5); object-fit: contain;
-            transform: scale(0.9); transition: transform 0.3s ease;
+        
+        .preview-content-wrap {
+            position: relative; display: flex; flex-direction: column; align-items: center;
+            max-height: 90vh; width: 100%;
+        }
+        
+        #preview-img { 
+            max-width: 95vw; max-height: 70vh; border-radius: 4px; 
+            box-shadow: 0 0 30px rgba(0,0,0,0.5); object-fit: contain; 
+            transform: scale(0.9); transition: transform 0.3s ease; margin-bottom: 15px;
         }
         #image-preview-modal.active #preview-img { transform: scale(1); }
-
-        .preview-close-btn {
-            position: absolute; top: 20px; right: 20px; width: 44px; height: 44px;
-            background: rgba(255,255,255,0.2); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; cursor: pointer; border: none;
-            color: #fff; backdrop-filter: blur(5px); z-index: 4001;
+        
+        /* Note Input Area */
+        .note-area {
+            width: 80%; max-width: 300px; text-align: center;
+            background: rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 12px;
+            backdrop-filter: blur(10px); transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
         }
+        .note-area:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); }
+        .note-label { font-size: 0.7rem; color: var(--gold); font-weight: 700; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        #note-input {
+            background: transparent; border: none; color: #fff; width: 100%;
+            font-size: 0.9rem; text-align: center; outline: none;
+            resize: none; overflow: hidden; height: 24px; font-family: inherit;
+        }
+        #note-input::placeholder { color: rgba(255,255,255,0.3); font-style: italic; }
+
+        .preview-close-btn { position: absolute; top: 20px; right: 20px; width: 44px; height: 44px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; color: #fff; backdrop-filter: blur(5px); z-index: 4001; }
         .preview-close-btn svg { width: 24px; height: 24px; fill: currentColor; }
         
-        #toast {
-            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-            background: rgba(30, 30, 30, 0.9); color: white;
-            padding: 10px 20px; border-radius: 30px;
-            font-size: 0.8rem; font-weight: 600;
-            pointer-events: none; opacity: 0; transition: opacity 0.3s;
-            z-index: 5000; text-align: center; white-space: nowrap;
-        }
+        #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(30, 30, 30, 0.9); color: white; padding: 10px 20px; border-radius: 30px; font-size: 0.8rem; font-weight: 600; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 5000; text-align: center; white-space: nowrap; }
         #toast.show { opacity: 1; }
         
     </style>
 </head>
 <body class="lang-zh">
 
-<!-- Name Entry Modal -->
+<!-- Name Entry Modal V2 -->
 <div id="name-modal" class="modal-overlay">
+    <div id="login-bg"></div>
     <div class="name-box">
+        <h2 id="modal-welcome-title">WELCOME</h2>
         <p id="modal-intro" class="modal-intro"></p> 
         <p id="modal-prompt" class="modal-prompt"></p>
         <input type="text" id="user-name-input" placeholder="" maxlength="10">
@@ -423,36 +495,43 @@
     </div>
 </div>
 
-<!-- Image Preview Modal -->
-<div id="image-preview-modal" onclick="closePreview()">
-    <button class="preview-close-btn">
+<!-- Image Preview Modal with Note -->
+<div id="image-preview-modal" onclick="if(event.target === this) closePreview()">
+    <button class="preview-close-btn" onclick="closePreview()">
         <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
     </button>
-    <img id="preview-img" src="" alt="Preview" onclick="event.stopPropagation()">
+    <div class="preview-content-wrap">
+        <img id="preview-img" src="" alt="Preview" onclick="event.stopPropagation()">
+        
+        <!-- Mood Note Section -->
+        <div class="note-area" onclick="event.stopPropagation()">
+            <div class="note-label">📝 Mood Note</div>
+            <textarea id="note-input" rows="1" maxlength="50" placeholder="Write something..."></textarea>
+        </div>
+    </div>
 </div>
 
 <!-- Toast -->
-<div id="toast">尚未取得，抽到後即可查看</div>
+<div id="toast"></div>
 
-<!-- Gallery View -->
-<div id="gallery-view">
+<!-- 1. Official Gallery View -->
+<div id="gallery-view" class="g-view-overlay">
     <header class="gallery-header">
+        <div id="g-ctrl-back" style="display: none;">
+            <button class="back-gallery-btn" onclick="backToGalleryHome()">
+                <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            </button>
+        </div>
         <div class="gallery-title-group">
             <div class="g-title-main" id="g-header-title">Gallery</div>
             <div class="g-title-sub" id="g-header-sub">Collection</div>
         </div>
         <div id="g-ctrl-home">
-            <button class="close-gallery-btn" onclick="toggleGallery(false)">&times;</button>
-        </div>
-        <div id="g-ctrl-back" style="display: none;">
-            <button class="back-gallery-btn" onclick="backToGalleryHome()">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-            </button>
+            <button class="close-gallery-btn" onclick="closeAllViews()">&times;</button>
         </div>
     </header>
     <div class="gallery-container">
         <div id="gallery-home" class="g-page">
-            <!-- Injected by JS -->
             <div id="gallery-hero-container"></div> 
             <div class="member-list" id="member-list-container"></div>
         </div>
@@ -462,11 +541,56 @@
     </div>
 </div>
 
+<!-- 2. Favorites View (VIP Cabinet) - Redesigned -->
+<div id="favorites-view" class="g-view-overlay">
+    <header class="gallery-header">
+        <div style="width: 34px;"></div> 
+        <div class="gallery-title-group">
+            <div class="g-title-main" id="fav-header-title">VIP COLLECTION</div>
+            <div class="g-title-sub">The Golden Cabinet</div>
+        </div>
+        <button class="close-gallery-btn" onclick="closeAllViews()">&times;</button>
+    </header>
+    <div class="gallery-container">
+        <div class="g-page">
+            <!-- Profile Section -->
+            <div class="fav-profile">
+                <div class="fav-profile-top">
+                    <div class="fav-avatar-container" onclick="triggerAvatarUpload()">
+                        <img id="fav-avatar-img" class="fav-avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23333'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E">
+                        <div class="fav-avatar-edit">✏️</div>
+                        <input type="file" id="avatar-input" accept="image/*" onchange="handleAvatarUpload(this)">
+                    </div>
+                    <div class="fav-info">
+                        <div class="fav-name" id="fav-username">Player</div>
+                        <textarea id="fav-bio-input" rows="1" placeholder="Write something..." maxlength="30"></textarea>
+                    </div>
+                </div>
+                
+                <!-- Member Stats Grid -->
+                <div id="fav-member-stats" class="fav-member-stats">
+                    <!-- Stats injected by JS -->
+                </div>
+            </div>
+
+            <!-- 15-Slot Grid -->
+            <div class="cabinet-grid" id="cabinet-grid">
+                <!-- Slots injected JS -->
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="app" id="app-container">
     <header class="header-row">
         <div class="header-side">
-            <button class="gallery-btn" onclick="toggleGallery(true)" aria-label="Gallery">
-                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5-7l-3 3.72L9 13l-3 4h12l-4-5z"/></svg>
+            <!-- Gallery Button -->
+            <button class="icon-btn" onclick="openGallery()" aria-label="Gallery">
+                <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z" fill="none"/><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h12v2H6zm0 4h8v2H6z"/></svg>
+            </button>
+            <!-- Favorites Button (Golden Star) -->
+            <button class="icon-btn fav-btn" onclick="openFavorites()" aria-label="Favorites">
+                <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
             </button>
         </div>
         <h1 id="title-main">Your Daily CORTIS!</h1>
@@ -481,37 +605,24 @@
 
     <main>
         <div class="window" id="card-window">
-            
-            <!-- 0. Default Overlay (Card Back) -->
             <div id="overlay">
                 <div id="card-obj" class="card">
                     <div class="card-face card-back">CORTIS</div>
                     <div id="card-name" class="card-face card-front">?</div>
                 </div>
             </div>
-
-            <!-- 1. Pulling Scene -->
             <div id="pull-scene">
-                <!-- Hint text -->
                 <div class="hint-text" id="pull-hint"></div>
-
-                <!-- The Draggable Card -->
                 <div id="pull-card-container">
                     <div class="pull-card-inner" id="pull-card-img"></div>
                 </div>
-
-                <!-- The Static Sleeve (Foreground) -->
                 <div class="sleeve">
                     <div class="sleeve-logo">CORTIS</div>
                 </div>
             </div>
-
-            <!-- 2. Success Result View (Replaces Canvas) -->
             <div id="success-view">
-                <!-- Final Card with Gloss -->
                 <div class="final-card gloss-effect" id="final-card-img"></div>
             </div>
-
         </div>
     </main>
 
@@ -534,14 +645,21 @@
             backBtn: "回到主畫面",
             limitBtn: "今日已用完 (3/3)",
             pullHint: "往上拉出小卡",
-            nameIntro: "Hi, COER! <br>動動手指，來開一張今天的驚喜小卡吧！✨",
-            namePrompt: "在開始之前，該怎麼稱呼你呢？",
+            nameIntroNew: "Hi, COER! <br>初次見面，請輸入你的暱稱",
+            nameIntroBack: "Hi, {user}!<br>歡迎回來，準備好今天的驚喜了嗎？",
+            namePrompt: "你的暱稱",
             namePlaceholder: "輸入暱稱...",
-            nameBtn: "確定",
+            nameBtn: "進入",
             galleryTitle: "成員圖鑑",
             gallerySub: "Official Collection",
             galleryLocked: "尚未取得，抽到後即可查看",
             galleryCollected: "已收集",
+            favTitle: "VIP 收藏櫃",
+            pinFull: "收藏櫃已滿 (15/15)，請先移除一張",
+            pinAdded: "已加入 VIP 收藏櫃",
+            pinRemoved: "已移出 VIP 收藏櫃",
+            pinLocked: "尚未取得，無法收藏",
+            emptySlot: "空缺",
             welcomeMsgs: [
                 "嗨 {user} ！今天想遇見哪位團員呢？✨",
                 "{user} ，今天的手氣如何？抽張小卡試試看吧！🔮",
@@ -549,19 +667,9 @@
                 "{user} ，來抽一張專屬於你今天的本命小卡吧！💖"
             ],
             limitMsg: "今天的運氣用完啦！明天再來 (3/3) 🌙",
-            pullMsgs: [
-                "心跳加速中...是誰躲在卡套裡？",
-                "慢慢拉出來...不要急...",
-                "哇！感覺這張卡的氣場很不一樣！",
-                "會是你心中的本命嗎？"
-            ],
-            successMsgs: [
-                "✨ {user}，捕捉到最閃耀的 {name} 了！",
-                "💖 {user}，這是屬於你的限定 {name}！",
-                "🌟 完美的瞬間！{user} 遇見了正在發光的 {name}",
-                "🎬 收藏成功！{user} 把 {name} 帶入庫了"
-            ],
-            copyright: "本網頁為 CORTIS 應援小作品，非官方發行。© 2026 Your Daily CORTIS! by <a href='https://www.threads.net/@leeami0720' target='_blank' class='footer-link'>@leeami0720</a>"  
+            pullMsgs: ["心跳加速中...是誰躲在卡套裡？", "慢慢拉出來...不要急...", "哇！感覺這張卡的氣場很不一樣！", "會是你心中的本命嗎？"],
+            successMsgs: ["✨ {user}，捕捉到最閃耀的 {name} 了！", "💖 {user}，這是屬於你的限定 {name}！", "🌟 完美的瞬間！{user} 遇見了正在發光的 {name}", "🎬 收藏成功！{user} 把 {name} 帶入庫了"],
+            copyright: "本網頁為 CORTIS 應援小作品，非官方發行。© 2026 Your Daily CORTIS! by <a href='https://www.threads.net/@leeami0720' target='_blank' class='footer-link'>@leeami0720</a>"
         },
         en: {
             title: "Your Daily CORTIS!",
@@ -570,77 +678,52 @@
             backBtn: "Back to Home",
             limitBtn: "Done for Today (3/3)",
             pullHint: "Swipe Up To Reveal",
-            nameIntro: "Hi, COER! <br>Ready for your daily surprise? Pull to reveal your card! ✨",
-            namePrompt: "Before we start, what is your name?",
+            nameIntroNew: "Hi, COER! <br>Nice to meet you. What's your name?",
+            nameIntroBack: "Hi, {user}!<br>Welcome back! Ready for today?",
+            namePrompt: "Your Nickname",
             namePlaceholder: "Enter nickname...",
-            nameBtn: "Let's Go",
+            nameBtn: "Enter",
             galleryTitle: "Gallery",
             gallerySub: "Official Collection",
             galleryLocked: "Locked. Pull to unlock!",
             galleryCollected: "Collected",
+            favTitle: "VIP Collection",
+            pinFull: "Cabinet full (15/15). Remove one first.",
+            pinAdded: "Added to VIP Cabinet",
+            pinRemoved: "Removed from VIP Cabinet",
+            pinLocked: "Locked card cannot be pinned",
+            emptySlot: "EMPTY",
             welcomeMsgs: [
                 "Hi {user}! Which member do you want to meet today? ✨",
                 "How's your luck today, {user}? Pull a card to find out! 🔮",
                 "Ready for your daily dose of CORTIS energy, {user}? 💪"
             ],
             limitMsg: "Today's luck is used up! Come back tomorrow (3/3) 🌙",
-            pullMsgs: [
-                "Heart racing... Who is inside?",
-                "Pull slowly... No rush...",
-                "Wow! This card feels special!",
-                "Is it your bias?"
-            ],
-            successMsgs: [
-                "✨ {user}, you've caught the brightest {name}!",
-                "💖 {user}, this is your limited edition {name}!",
-                "🌟 A perfect moment! {user} just met the glowing {name}",
-                "🎬 Successfully collected! {user} has added {name} to the vault"
-            ],
+            pullMsgs: ["Heart racing... Who is inside?", "Pull slowly... No rush...", "Wow! This card feels special!", "Is it your bias?"],
+            successMsgs: ["✨ {user}, you've caught the brightest {name}!", "💖 {user}, this is your limited edition {name}!", "🌟 A perfect moment! {user} just met the glowing {name}", "🎬 Successfully collected! {user} has added {name} to the vault"],
             copyright: "This is a non-official fan-made project. © 2026 Your Daily CORTIS! by <a href='https://www.threads.net/leeami0720' target='_blank' class='footer-link'>@leeami0720</a>"
         }
     };
 
     const members = [
-        { 
-            name: 'MARTIN', 
-            imgs: [
-                'https://i.meee.com.tw/MOYXYYH.jpg', 'https://i.meee.com.tw/SEXIiU3.jpg', 'https://i.meee.com.tw/zFRjemR.jpg', 'https://i.meee.com.tw/nybbReK.jpg', 'https://i.meee.com.tw/BFcRZlJ.jpg', 'https://i.meee.com.tw/Pc2u4J8.jpg', 'https://i.meee.com.tw/RnUITpD.jpg', 'https://i.meee.com.tw/Zb8FRRs.jpg', 'https://i.meee.com.tw/ZgqWbdW.jpg', 'https://i.meee.com.tw/JPuCVMj.jpg', 'https://i.meee.com.tw/cGxbgRL.jpg', 'https://i.meee.com.tw/WZ9HKOt.jpg', 'https://i.meee.com.tw/EAhkLPa.jpg', 'https://i.meee.com.tw/CHRCiwv.jpg', 'https://i.meee.com.tw/K4acoX3.jpg', 'https://i.meee.com.tw/AgqCwUG.jpg', 'https://i.meee.com.tw/IBiP9Xm.jpg', 'https://i.meee.com.tw/0pdENOw.jpg', 'https://i.meee.com.tw/wu2sbnG.jpg', 'https://i.meee.com.tw/fPwFyVD.jpg', 'https://i.meee.com.tw/VcFbdLs.jpg', 'https://i.meee.com.tw/qCtj1y3.jpg', 'https://i.meee.com.tw/IP97a5i.jpg', 'https://i.meee.com.tw/0gKJbSE.jpg', 'https://i.meee.com.tw/LHFUSDc.jpg', 'https://i.meee.com.tw/9udlrZt.jpg', 'https://i.meee.com.tw/63a3eGG.jpg', 'https://i.meee.com.tw/QLI0KOO.jpg', 'https://i.meee.com.tw/FBfCScg.jpg', 'https://i.meee.com.tw/HKrjhy2.jpg', 'https://i.meee.com.tw/nBHIUqX.jpg', 'https://i.meee.com.tw/vGQkP0l.jpg', 'https://i.meee.com.tw/npm2G9Y.jpg', 'https://i.meee.com.tw/3pEHph6.jpg', 'https://i.meee.com.tw/wbFC98x.jpg', 'https://i.meee.com.tw/s7uRU3X.jpg', 'https://i.meee.com.tw/GpmAtDL.jpg', 'https://i.meee.com.tw/lb7RCBk.jpg', 'https://i.meee.com.tw/BqGhZtG.jpg', 'https://i.meee.com.tw/OiaypWz.jpg', 'https://i.meee.com.tw/IBE84U7.jpg'
-            ] 
-        },
-        { 
-            name: 'JAMES', 
-            imgs: [
-                'https://i.meee.com.tw/CVBsBfd.jpg', 'https://i.meee.com.tw/xtAhmPX.jpg', 'https://i.meee.com.tw/3G5NxcV.jpg', 'https://i.meee.com.tw/kA8DG3b.jpg', 'https://i.meee.com.tw/VMDbJX7.jpg', 'https://i.meee.com.tw/agwNTow.jpg', 'https://i.meee.com.tw/Ipfv0L5.jpg', 'https://i.meee.com.tw/08xbMYK.jpg', 'https://i.meee.com.tw/BMFBEF9.jpg', 'https://i.meee.com.tw/443BjvM.jpg', 'https://i.meee.com.tw/NyCrZFY.jpg', 'https://i.meee.com.tw/nqHzylv.jpg', 'https://i.meee.com.tw/HdAbga0.jpg', 'https://i.meee.com.tw/tQ3LFv8.jpg', 'https://i.meee.com.tw/Pgf02by.jpg', 'https://i.meee.com.tw/tUHP9eq.jpg', 'https://i.meee.com.tw/cFAFXHL.jpg', 'https://i.meee.com.tw/iw81cbd.jpg', 'https://i.meee.com.tw/ovceTuk.jpg', 'https://i.meee.com.tw/7wCu2Ne.jpg', 'https://i.meee.com.tw/b9zN4u7.jpg', 'https://i.meee.com.tw/GatiyNi.jpg', 'https://i.meee.com.tw/09mgKIc.jpg', 'https://i.meee.com.tw/OhvD8d6.jpg', 'https://i.meee.com.tw/xmxsUOU.jpg', 'https://i.meee.com.tw/I9kGYfx.jpg', 'https://i.meee.com.tw/qOU6Jq5.jpg', 'https://i.meee.com.tw/WA6Owsw.jpg', 'https://i.meee.com.tw/i9oRArI.jpg', 'https://i.meee.com.tw/jPwvfEK.jpg', 'https://i.meee.com.tw/uWJs9sT.jpg', 'https://i.meee.com.tw/N3DAwqP.jpg', 'https://i.meee.com.tw/Ak8oEDk.jpg', 'https://i.meee.com.tw/N3J3tmF.jpg', 'https://i.meee.com.tw/Zni4ahH.jpg', 'https://i.meee.com.tw/OzvQZvK.jpg', 'https://i.meee.com.tw/oAhHC9H.jpg', 'https://i.meee.com.tw/YPibdR6.jpg', 'https://i.meee.com.tw/GGAf8Wh.jpg', 'https://i.meee.com.tw/AaNm91y.jpg', 'https://i.meee.com.tw/vnOtoNj.jpg'
-            ] 
-        },
-        { 
-            name: 'JUHOON', 
-            imgs: [
-                'https://i.meee.com.tw/NcdYMX7.jpg', 'https://i.meee.com.tw/J9lZu2w.jpg', 'https://i.meee.com.tw/2urGipe.jpg', 'https://i.meee.com.tw/Etfw5vh.jpg', 'https://i.meee.com.tw/XPZy2Ax.jpg', 'https://i.meee.com.tw/idAqO9Z.jpg', 'https://i.meee.com.tw/jG1kN6o.jpg', 'https://i.meee.com.tw/6k15xnq.jpg', 'https://i.meee.com.tw/ZuWz8u9.jpg', 'https://i.meee.com.tw/NiWzAif.jpg', 'https://i.meee.com.tw/XfHBS3X.jpg', 'https://i.meee.com.tw/QLDYDN5.jpg', 'https://i.meee.com.tw/RdO84FD.jpg', 'https://i.meee.com.tw/iYWyYIV.jpg', 'https://i.meee.com.tw/LyHeJwT.jpg', 'https://i.meee.com.tw/6Iu0lc0.jpg', 'https://i.meee.com.tw/cOiAmF3.jpg', 'https://i.meee.com.tw/CPNWL6a.jpg', 'https://i.meee.com.tw/F8KcTfr.jpg', 'https://i.meee.com.tw/thhW0yr.jpg', 'https://i.meee.com.tw/V7Fw2Fx.jpg', 'https://i.meee.com.tw/2RUrC2b.jpg', 'https://i.meee.com.tw/RtZyWdr.jpg', 'https://i.meee.com.tw/FpqvDsF.jpg', 'https://i.meee.com.tw/rcvG6eh.jpg', 'https://i.meee.com.tw/VkCgEja.jpg', 'https://i.meee.com.tw/7xURHqc.jpg', 'https://i.meee.com.tw/lGZ6xBQ.jpg', 'https://i.meee.com.tw/kqPD6I4.jpg', 'https://i.meee.com.tw/26CRqzz.jpg', 'https://i.meee.com.tw/hrxaA4d.jpg', 'https://i.meee.com.tw/GJcXP2N.jpg', 'https://i.meee.com.tw/ZbPgm5R.jpg', 'https://i.meee.com.tw/62oX3v0.jpg', 'https://i.meee.com.tw/Mqfwqov.jpg', 'https://i.meee.com.tw/T9M6c8T.jpg', 'https://i.meee.com.tw/QTcLlEG.jpg', 'https://i.meee.com.tw/L0hUH8u.jpg', 'https://i.meee.com.tw/9qdsKFy.jpg', 'https://i.meee.com.tw/1Dn8QUo.jpg', 'https://i.meee.com.tw/PYgaVcq.jpg',
-                'https://i.meee.com.tw/YvR226F.jpg', 'https://i.meee.com.tw/1IdLg4S.jpg', 'https://i.meee.com.tw/ErLs49o.jpg', 'https://i.meee.com.tw/husx8Dq.jpg', 'https://i.meee.com.tw/K6IR9yB.jpg', 'https://i.meee.com.tw/GpB4tTP.jpg', 'https://i.meee.com.tw/Amke524.jpg', 'https://i.meee.com.tw/ZHnFfuD.jpg', 'https://i.meee.com.tw/K0Q3Zk7.jpg', 'https://i.meee.com.tw/Xo5PIUE.jpg', 'https://i.meee.com.tw/FeXoANn.jpg', 'https://i.meee.com.tw/Ebm0NrV.jpg', 'https://i.meee.com.tw/tmYn8Oj.jpg', 'https://i.meee.com.tw/ScydKUc.jpg', 'https://i.meee.com.tw/utfFpEM.jpg', 'https://i.meee.com.tw/W1PhhsQ.jpg', 'https://i.meee.com.tw/NhJU1BN.jpg', 'https://i.meee.com.tw/Pu6Z5jy.jpg', 'https://i.meee.com.tw/KqcC0Cz.jpg', 'https://i.meee.com.tw/YVwBTKD.jpg', 'https://i.meee.com.tw/1XBpYVx.jpg', 'https://i.meee.com.tw/IKdX7QQ.jpg', 'https://i.meee.com.tw/DyTlxOr.jpg', 'https://i.meee.com.tw/Vc9GLcy.jpg', 'https://i.meee.com.tw/RDG0KYL.jpg', 'https://i.meee.com.tw/BEJVAjp.jpg', 'https://i.meee.com.tw/CeT6PFE.jpg', 'https://i.meee.com.tw/hGX7zQl.jpg', 'https://i.meee.com.tw/ehyVDWO.jpg', 'https://i.meee.com.tw/kpXdyd8.jpg'
-            ] 
-        },
-        { 
-            name: 'SEONGHYEON', 
-            imgs: [
-                'https://i.meee.com.tw/BIumaWw.jpg', 'https://i.meee.com.tw/1EVXMKA.jpg', 'https://i.meee.com.tw/ovZEBqB.jpg', 'https://i.meee.com.tw/stTT15O.jpg', 'https://i.meee.com.tw/4BkHrGv.jpg', 'https://i.meee.com.tw/IttS1Qk.jpg', 'https://i.meee.com.tw/zEEp4hj.jpg', 'https://i.meee.com.tw/Wmvt06M.jpg', 'https://i.meee.com.tw/HC1zIaI.jpg', 'https://i.meee.com.tw/48UcC4j.jpg', 'https://i.meee.com.tw/7bjuACv.jpg', 'https://i.meee.com.tw/4SA8Zfn.jpg', 'https://i.meee.com.tw/50ugDvH.jpg', 'https://i.meee.com.tw/R3gWDCJ.jpg', 'https://i.meee.com.tw/OxAENiY.jpg', 'https://i.meee.com.tw/PncXEQb.jpg', 'https://i.meee.com.tw/dFGOhkJ.jpg', 'https://i.meee.com.tw/wJ0yrIp.jpg', 'https://i.meee.com.tw/pvDLmWS.jpg', 'https://i.meee.com.tw/cBpEnL7.jpg', 'https://i.meee.com.tw/iGx6FU4.jpg', 'https://i.meee.com.tw/uVaK1ZC.jpg', 'https://i.meee.com.tw/Coe2Xji.jpg', 'https://i.meee.com.tw/rmLojta.jpg', 'https://i.meee.com.tw/fUyJ5uZ.jpg', 'https://i.meee.com.tw/pTTflJj.jpg', 'https://i.meee.com.tw/G9VS9NE.jpg', 'https://i.meee.com.tw/7RTGCmf.jpg', 'https://i.meee.com.tw/EgTENpf.jpg', 'https://i.meee.com.tw/ocU7do0.jpg', 'https://i.meee.com.tw/XdMepIA.jpg', 'https://i.meee.com.tw/MMlSVTC.jpg', 'https://i.meee.com.tw/4diqcVU.jpg', 'https://i.meee.com.tw/LobjZF4.jpg', 'https://i.meee.com.tw/E7m4FCB.jpg', 'https://i.meee.com.tw/l9T7qtd.jpg', 'https://i.meee.com.tw/DMGbGxW.jpg', 'https://i.meee.com.tw/zzR5FSh.jpg', 'https://i.meee.com.tw/bPUxjlO.jpg', 'https://i.meee.com.tw/DDetHVG.jpg', 'https://i.meee.com.tw/Lqddbrl.jpg'
-            ] 
-        },
-        { 
-            name: 'KEONHO', 
-            imgs: [
-                'https://i.meee.com.tw/RifsdWi.jpg', 'https://i.meee.com.tw/h6sBuPV.jpg', 'https://i.meee.com.tw/orrhHJ9.jpg', 'https://i.meee.com.tw/ulzgelY.jpg', 'https://i.meee.com.tw/hrasay4.jpg', 'https://i.meee.com.tw/KdBrKDx.jpg', 'https://i.meee.com.tw/us2KGpy.jpg', 'https://i.meee.com.tw/UwUBIUD.jpg', 'https://i.meee.com.tw/gF9niFB.jpg', 'https://i.meee.com.tw/CRHCpB1.jpg', 'https://i.meee.com.tw/BdkFp7E.jpg', 'https://i.meee.com.tw/EpSMghF.jpg', 'https://i.meee.com.tw/IiOHTxO.jpg', 'https://i.meee.com.tw/FKtO9gB.jpg', 'https://i.meee.com.tw/uvavWIW.jpg', 'https://i.meee.com.tw/ey4XbGj.jpg', 'https://i.meee.com.tw/yFoEH6Y.jpg', 'https://i.meee.com.tw/cyAyduB.jpg', 'https://i.meee.com.tw/pzm48tI.jpg', 'https://i.meee.com.tw/qGoDBGL.jpg', 'https://i.meee.com.tw/OvezIXK.jpg', 'https://i.meee.com.tw/lc2cvnR.jpg', 'https://i.meee.com.tw/6EIUcNn.jpg', 'https://i.meee.com.tw/EM9l1yO.jpg', 'https://i.meee.com.tw/7cDaWyU.jpg', 'https://i.meee.com.tw/VBOiyxl.jpg', 'https://i.meee.com.tw/7RhEFsO.jpg', 'https://i.meee.com.tw/gWFHTfh.jpg', 'https://i.meee.com.tw/PMSu76m.jpg', 'https://i.meee.com.tw/2TjeXdU.jpg', 'https://i.meee.com.tw/edDiacb.jpg', 'https://i.meee.com.tw/9Ss2EVA.jpg', 'https://i.meee.com.tw/leGjRQu.jpg', 'https://i.meee.com.tw/iRghcBx.jpg', 'https://i.meee.com.tw/sIHEA1v.jpg', 'https://i.meee.com.tw/Bo8qOPs.jpg', 'https://i.meee.com.tw/f9DcHTT.jpg', 'https://i.meee.com.tw/JIfMKy7.jpg', 'https://i.meee.com.tw/i95UGif.jpg', 'https://i.meee.com.tw/xkbTgyT.jpg', 'https://i.meee.com.tw/24EydLu.jpg'
-            ] 
-        }
+        { name: 'MARTIN', imgs: ['https://i.meee.com.tw/MOYXYYH.jpg', 'https://i.meee.com.tw/SEXIiU3.jpg', 'https://i.meee.com.tw/zFRjemR.jpg', 'https://i.meee.com.tw/nybbReK.jpg', 'https://i.meee.com.tw/BFcRZlJ.jpg', 'https://i.meee.com.tw/Pc2u4J8.jpg', 'https://i.meee.com.tw/RnUITpD.jpg', 'https://i.meee.com.tw/Zb8FRRs.jpg', 'https://i.meee.com.tw/ZgqWbdW.jpg', 'https://i.meee.com.tw/JPuCVMj.jpg', 'https://i.meee.com.tw/cGxbgRL.jpg', 'https://i.meee.com.tw/WZ9HKOt.jpg', 'https://i.meee.com.tw/EAhkLPa.jpg', 'https://i.meee.com.tw/CHRCiwv.jpg', 'https://i.meee.com.tw/K4acoX3.jpg', 'https://i.meee.com.tw/AgqCwUG.jpg', 'https://i.meee.com.tw/IBiP9Xm.jpg', 'https://i.meee.com.tw/0pdENOw.jpg', 'https://i.meee.com.tw/wu2sbnG.jpg', 'https://i.meee.com.tw/fPwFyVD.jpg', 'https://i.meee.com.tw/VcFbdLs.jpg', 'https://i.meee.com.tw/qCtj1y3.jpg', 'https://i.meee.com.tw/IP97a5i.jpg', 'https://i.meee.com.tw/0gKJbSE.jpg', 'https://i.meee.com.tw/LHFUSDc.jpg', 'https://i.meee.com.tw/9udlrZt.jpg', 'https://i.meee.com.tw/63a3eGG.jpg', 'https://i.meee.com.tw/QLI0KOO.jpg', 'https://i.meee.com.tw/FBfCScg.jpg', 'https://i.meee.com.tw/HKrjhy2.jpg', 'https://i.meee.com.tw/nBHIUqX.jpg', 'https://i.meee.com.tw/vGQkP0l.jpg', 'https://i.meee.com.tw/npm2G9Y.jpg', 'https://i.meee.com.tw/3pEHph6.jpg', 'https://i.meee.com.tw/wbFC98x.jpg', 'https://i.meee.com.tw/s7uRU3X.jpg', 'https://i.meee.com.tw/GpmAtDL.jpg', 'https://i.meee.com.tw/lb7RCBk.jpg', 'https://i.meee.com.tw/BqGhZtG.jpg', 'https://i.meee.com.tw/OiaypWz.jpg', 'https://i.meee.com.tw/IBE84U7.jpg'] },
+        { name: 'JAMES', imgs: ['https://i.meee.com.tw/CVBsBfd.jpg', 'https://i.meee.com.tw/xtAhmPX.jpg', 'https://i.meee.com.tw/3G5NxcV.jpg', 'https://i.meee.com.tw/kA8DG3b.jpg', 'https://i.meee.com.tw/VMDbJX7.jpg', 'https://i.meee.com.tw/agwNTow.jpg', 'https://i.meee.com.tw/Ipfv0L5.jpg', 'https://i.meee.com.tw/08xbMYK.jpg', 'https://i.meee.com.tw/BMFBEF9.jpg', 'https://i.meee.com.tw/443BjvM.jpg', 'https://i.meee.com.tw/NyCrZFY.jpg', 'https://i.meee.com.tw/nqHzylv.jpg', 'https://i.meee.com.tw/HdAbga0.jpg', 'https://i.meee.com.tw/tQ3LFv8.jpg', 'https://i.meee.com.tw/Pgf02by.jpg', 'https://i.meee.com.tw/tUHP9eq.jpg', 'https://i.meee.com.tw/cFAFXHL.jpg', 'https://i.meee.com.tw/iw81cbd.jpg', 'https://i.meee.com.tw/ovceTuk.jpg', 'https://i.meee.com.tw/7wCu2Ne.jpg', 'https://i.meee.com.tw/b9zN4u7.jpg', 'https://i.meee.com.tw/GatiyNi.jpg', 'https://i.meee.com.tw/09mgKIc.jpg', 'https://i.meee.com.tw/OhvD8d6.jpg', 'https://i.meee.com.tw/xmxsUOU.jpg', 'https://i.meee.com.tw/I9kGYfx.jpg', 'https://i.meee.com.tw/qOU6Jq5.jpg', 'https://i.meee.com.tw/WA6Owsw.jpg', 'https://i.meee.com.tw/i9oRArI.jpg', 'https://i.meee.com.tw/jPwvfEK.jpg', 'https://i.meee.com.tw/uWJs9sT.jpg', 'https://i.meee.com.tw/N3DAwqP.jpg', 'https://i.meee.com.tw/Ak8oEDk.jpg', 'https://i.meee.com.tw/N3J3tmF.jpg', 'https://i.meee.com.tw/Zni4ahH.jpg', 'https://i.meee.com.tw/OzvQZvK.jpg', 'https://i.meee.com.tw/oAhHC9H.jpg', 'https://i.meee.com.tw/YPibdR6.jpg', 'https://i.meee.com.tw/GGAf8Wh.jpg', 'https://i.meee.com.tw/AaNm91y.jpg', 'https://i.meee.com.tw/vnOtoNj.jpg'] },
+        { name: 'JUHOON', imgs: ['https://i.meee.com.tw/NcdYMX7.jpg', 'https://i.meee.com.tw/J9lZu2w.jpg', 'https://i.meee.com.tw/2urGipe.jpg', 'https://i.meee.com.tw/Etfw5vh.jpg', 'https://i.meee.com.tw/XPZy2Ax.jpg', 'https://i.meee.com.tw/idAqO9Z.jpg', 'https://i.meee.com.tw/jG1kN6o.jpg', 'https://i.meee.com.tw/6k15xnq.jpg', 'https://i.meee.com.tw/ZuWz8u9.jpg', 'https://i.meee.com.tw/NiWzAif.jpg', 'https://i.meee.com.tw/XfHBS3X.jpg', 'https://i.meee.com.tw/QLDYDN5.jpg', 'https://i.meee.com.tw/RdO84FD.jpg', 'https://i.meee.com.tw/iYWyYIV.jpg', 'https://i.meee.com.tw/LyHeJwT.jpg', 'https://i.meee.com.tw/6Iu0lc0.jpg', 'https://i.meee.com.tw/cOiAmF3.jpg', 'https://i.meee.com.tw/CPNWL6a.jpg', 'https://i.meee.com.tw/F8KcTfr.jpg', 'https://i.meee.com.tw/thhW0yr.jpg', 'https://i.meee.com.tw/V7Fw2Fx.jpg', 'https://i.meee.com.tw/2RUrC2b.jpg', 'https://i.meee.com.tw/RtZyWdr.jpg', 'https://i.meee.com.tw/FpqvDsF.jpg', 'https://i.meee.com.tw/rcvG6eh.jpg', 'https://i.meee.com.tw/VkCgEja.jpg', 'https://i.meee.com.tw/7xURHqc.jpg', 'https://i.meee.com.tw/lGZ6xBQ.jpg', 'https://i.meee.com.tw/kqPD6I4.jpg', 'https://i.meee.com.tw/26CRqzz.jpg', 'https://i.meee.com.tw/hrxaA4d.jpg', 'https://i.meee.com.tw/GJcXP2N.jpg', 'https://i.meee.com.tw/ZbPgm5R.jpg', 'https://i.meee.com.tw/62oX3v0.jpg', 'https://i.meee.com.tw/Mqfwqov.jpg', 'https://i.meee.com.tw/T9M6c8T.jpg', 'https://i.meee.com.tw/QTcLlEG.jpg', 'https://i.meee.com.tw/L0hUH8u.jpg', 'https://i.meee.com.tw/9qdsKFy.jpg', 'https://i.meee.com.tw/1Dn8QUo.jpg', 'https://i.meee.com.tw/PYgaVcq.jpg', 'https://i.meee.com.tw/YvR226F.jpg', 'https://i.meee.com.tw/1IdLg4S.jpg', 'https://i.meee.com.tw/ErLs49o.jpg', 'https://i.meee.com.tw/husx8Dq.jpg', 'https://i.meee.com.tw/K6IR9yB.jpg', 'https://i.meee.com.tw/GpB4tTP.jpg', 'https://i.meee.com.tw/Amke524.jpg', 'https://i.meee.com.tw/ZHnFfuD.jpg', 'https://i.meee.com.tw/K0Q3Zk7.jpg', 'https://i.meee.com.tw/Xo5PIUE.jpg', 'https://i.meee.com.tw/FeXoANn.jpg', 'https://i.meee.com.tw/Ebm0NrV.jpg', 'https://i.meee.com.tw/tmYn8Oj.jpg', 'https://i.meee.com.tw/ScydKUc.jpg', 'https://i.meee.com.tw/utfFpEM.jpg', 'https://i.meee.com.tw/W1PhhsQ.jpg', 'https://i.meee.com.tw/NhJU1BN.jpg', 'https://i.meee.com.tw/Pu6Z5jy.jpg', 'https://i.meee.com.tw/KqcC0Cz.jpg', 'https://i.meee.com.tw/YVwBTKD.jpg', 'https://i.meee.com.tw/1XBpYVx.jpg', 'https://i.meee.com.tw/IKdX7QQ.jpg', 'https://i.meee.com.tw/DyTlxOr.jpg', 'https://i.meee.com.tw/Vc9GLcy.jpg', 'https://i.meee.com.tw/RDG0KYL.jpg', 'https://i.meee.com.tw/BEJVAjp.jpg', 'https://i.meee.com.tw/CeT6PFE.jpg', 'https://i.meee.com.tw/hGX7zQl.jpg', 'https://i.meee.com.tw/ehyVDWO.jpg', 'https://i.meee.com.tw/kpXdyd8.jpg'] },
+        { name: 'SEONGHYEON', imgs: ['https://i.meee.com.tw/BIumaWw.jpg', 'https://i.meee.com.tw/1EVXMKA.jpg', 'https://i.meee.com.tw/ovZEBqB.jpg', 'https://i.meee.com.tw/stTT15O.jpg', 'https://i.meee.com.tw/4BkHrGv.jpg', 'https://i.meee.com.tw/IttS1Qk.jpg', 'https://i.meee.com.tw/zEEp4hj.jpg', 'https://i.meee.com.tw/Wmvt06M.jpg', 'https://i.meee.com.tw/HC1zIaI.jpg', 'https://i.meee.com.tw/48UcC4j.jpg', 'https://i.meee.com.tw/7bjuACv.jpg', 'https://i.meee.com.tw/4SA8Zfn.jpg', 'https://i.meee.com.tw/50ugDvH.jpg', 'https://i.meee.com.tw/R3gWDCJ.jpg', 'https://i.meee.com.tw/OxAENiY.jpg', 'https://i.meee.com.tw/PncXEQb.jpg', 'https://i.meee.com.tw/dFGOhkJ.jpg', 'https://i.meee.com.tw/wJ0yrIp.jpg', 'https://i.meee.com.tw/pvDLmWS.jpg', 'https://i.meee.com.tw/cBpEnL7.jpg', 'https://i.meee.com.tw/iGx6FU4.jpg', 'https://i.meee.com.tw/uVaK1ZC.jpg', 'https://i.meee.com.tw/Coe2Xji.jpg', 'https://i.meee.com.tw/rmLojta.jpg', 'https://i.meee.com.tw/fUyJ5uZ.jpg', 'https://i.meee.com.tw/pTTflJj.jpg', 'https://i.meee.com.tw/G9VS9NE.jpg', 'https://i.meee.com.tw/7RTGCmf.jpg', 'https://i.meee.com.tw/EgTENpf.jpg', 'https://i.meee.com.tw/ocU7do0.jpg', 'https://i.meee.com.tw/XdMepIA.jpg', 'https://i.meee.com.tw/MMlSVTC.jpg', 'https://i.meee.com.tw/4diqcVU.jpg', 'https://i.meee.com.tw/LobjZF4.jpg', 'https://i.meee.com.tw/E7m4FCB.jpg', 'https://i.meee.com.tw/l9T7qtd.jpg', 'https://i.meee.com.tw/DMGbGxW.jpg', 'https://i.meee.com.tw/zzR5FSh.jpg', 'https://i.meee.com.tw/bPUxjlO.jpg', 'https://i.meee.com.tw/DDetHVG.jpg', 'https://i.meee.com.tw/Lqddbrl.jpg'] },
+        { name: 'KEONHO', imgs: ['https://i.meee.com.tw/RifsdWi.jpg', 'https://i.meee.com.tw/h6sBuPV.jpg', 'https://i.meee.com.tw/orrhHJ9.jpg', 'https://i.meee.com.tw/ulzgelY.jpg', 'https://i.meee.com.tw/hrasay4.jpg', 'https://i.meee.com.tw/KdBrKDx.jpg', 'https://i.meee.com.tw/us2KGpy.jpg', 'https://i.meee.com.tw/UwUBIUD.jpg', 'https://i.meee.com.tw/gF9niFB.jpg', 'https://i.meee.com.tw/CRHCpB1.jpg', 'https://i.meee.com.tw/BdkFp7E.jpg', 'https://i.meee.com.tw/EpSMghF.jpg', 'https://i.meee.com.tw/IiOHTxO.jpg', 'https://i.meee.com.tw/FKtO9gB.jpg', 'https://i.meee.com.tw/uvavWIW.jpg', 'https://i.meee.com.tw/ey4XbGj.jpg', 'https://i.meee.com.tw/yFoEH6Y.jpg', 'https://i.meee.com.tw/cyAyduB.jpg', 'https://i.meee.com.tw/pzm48tI.jpg', 'https://i.meee.com.tw/qGoDBGL.jpg', 'https://i.meee.com.tw/OvezIXK.jpg', 'https://i.meee.com.tw/lc2cvnR.jpg', 'https://i.meee.com.tw/6EIUcNn.jpg', 'https://i.meee.com.tw/EM9l1yO.jpg', 'https://i.meee.com.tw/7cDaWyU.jpg', 'https://i.meee.com.tw/VBOiyxl.jpg', 'https://i.meee.com.tw/7RhEFsO.jpg', 'https://i.meee.com.tw/gWFHTfh.jpg', 'https://i.meee.com.tw/PMSu76m.jpg', 'https://i.meee.com.tw/2TjeXdU.jpg', 'https://i.meee.com.tw/edDiacb.jpg', 'https://i.meee.com.tw/9Ss2EVA.jpg', 'https://i.meee.com.tw/leGjRQu.jpg', 'https://i.meee.com.tw/iRghcBx.jpg', 'https://i.meee.com.tw/sIHEA1v.jpg', 'https://i.meee.com.tw/Bo8qOPs.jpg', 'https://i.meee.com.tw/f9DcHTT.jpg', 'https://i.meee.com.tw/JIfMKy7.jpg', 'https://i.meee.com.tw/i95UGif.jpg', 'https://i.meee.com.tw/xkbTgyT.jpg', 'https://i.meee.com.tw/24EydLu.jpg'] }
     ];
 
     /* --- GLOBAL STATE --- */
     let currentLang = localStorage.getItem('cortis_lang') || 'zh';
     let userName = localStorage.getItem('cortis_user_name') || "";
-    // Collection: Array of Unlocked Image URLs
+    let userBio = localStorage.getItem('cortis_user_bio') || "";
     let collection = JSON.parse(localStorage.getItem('cortis_collection') || '[]');
+    let pinnedCollection = JSON.parse(localStorage.getItem('cortis_pinned') || '[]');
+    // Notes: { "url": "note text" }
+    let notes = JSON.parse(localStorage.getItem('cortis_notes') || '{}');
+    // Avatar
+    let userAvatar = localStorage.getItem('cortis_avatar') || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ccc'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E";
 
-    // Daily Limit Logic
     let dailyPullCount = parseInt(localStorage.getItem('cortis_daily_count') || '0');
     let lastPullDate = localStorage.getItem('cortis_last_pull_date') || '';
     const todayStr = new Date().toDateString();
@@ -651,22 +734,16 @@
         localStorage.setItem('cortis_last_pull_date', todayStr);
     }
 
-    let state = 'IDLE'; // IDLE, DRAWN, PLAYING, END
+    let state = 'IDLE'; 
     let selectedMember = null;
     let selectedImg = null;
     let currentPullMsgIdx = 0;
     let currentSuccessMsgIdx = 0;
     let welcomeIdx = Math.floor(Math.random() * 3); 
     
-    // Gallery State
     let activeGalleryTab = 0; 
-
-    // Pull Logic
-    let startY = 0;
-    let currentDragY = 0;
-    let isDragging = false;
-    const initialBottomPct = -60; // Initial css bottom percentage
-    const successThreshold = -10; // If bottom > -10% (almost out), trigger success
+    let startY = 0, isDragging = false;
+    const initialBottomPct = -60, successThreshold = -10;
 
     const mainBtn = document.getElementById('main-btn'), redrawBtn = document.getElementById('redraw-btn');
     const quoteBox = document.getElementById('quote'), appCont = document.getElementById('app-container');
@@ -674,71 +751,79 @@
     /* --- UI FUNCTIONS --- */
     function updateUI() {
         const lang = i18n[currentLang];
-
-        // Modals
-        document.getElementById('modal-intro').innerHTML = lang.nameIntro;
-        document.getElementById('modal-prompt').innerText = lang.namePrompt;
         document.getElementById('modal-btn').innerText = lang.nameBtn;
         document.getElementById('user-name-input').placeholder = lang.namePlaceholder;
+        document.getElementById('modal-prompt').innerText = lang.namePrompt;
         
-        // Gallery
         document.getElementById('g-header-title').innerText = lang.galleryTitle;
-        document.getElementById('toast').innerText = lang.galleryLocked;
         document.getElementById('pull-hint').innerText = lang.pullHint;
+        document.getElementById('fav-header-title').innerText = lang.favTitle;
 
         document.getElementById('title-main').innerText = lang.title;
         document.getElementById('copy-text').innerHTML = lang.copyright;
 
-        // Language Classes
         if (currentLang === 'zh') { appCont.classList.add('lang-zh'); appCont.classList.remove('lang-en'); } 
         else { appCont.classList.add('lang-en'); appCont.classList.remove('lang-zh'); }
 
         const displayUser = userName || (currentLang === 'zh' ? "朋友" : "Friend");
         const userSpan = `&nbsp;<span class="user-clickable" onclick="resetUserName()">${displayUser}</span>&nbsp`;
 
-        // Main Button States
+        // Update Profile
+        document.getElementById('fav-username').innerText = userName || "Player";
+        document.getElementById('fav-avatar-img').src = userAvatar;
+        
+        // Load Bio
+        const bioInput = document.getElementById('fav-bio-input');
+        bioInput.value = userBio;
+        bioInput.oninput = function() {
+            userBio = this.value;
+            localStorage.setItem('cortis_user_bio', userBio);
+        };
+
+        // Update Member Stats in Fav View
+        const statsContainer = document.getElementById('fav-member-stats');
+        if(statsContainer) {
+            statsContainer.innerHTML = '';
+            members.forEach(m => {
+                let collected = 0;
+                m.imgs.forEach(url => { if (collection.includes(url)) collected++; });
+                const pill = document.createElement('div');
+                pill.className = 'stat-pill';
+                pill.innerHTML = `<span>${m.name}</span> ${collected}/${m.imgs.length}`;
+                statsContainer.appendChild(pill);
+            });
+        }
+
         if (state === 'IDLE') {
             mainBtn.classList.remove('btn-active-float');
             redrawBtn.style.display = 'none';
-            
-            // Check Daily Limit
             if (dailyPullCount >= 3) {
                 mainBtn.innerText = lang.limitBtn;
                 mainBtn.classList.add('btn-disabled');
                 quoteBox.innerText = lang.limitMsg;
-                mainBtn.onclick = null; // Disable click
+                mainBtn.onclick = null; 
             } else {
                 let left = 3 - dailyPullCount;
                 mainBtn.innerText = lang.pullBtn.replace('{left}', left);
                 mainBtn.classList.remove('btn-disabled');
-                mainBtn.onclick = handleMain; // Enable click
-                
-                // Safe welcome index
+                mainBtn.onclick = handleMain;
                 let wIdx = welcomeIdx % lang.welcomeMsgs.length;
                 let msg = lang.welcomeMsgs[wIdx];
                 quoteBox.innerHTML = msg.replace("{user}", userSpan);             
             }
-
         } else if (state === 'DRAWN' || state === 'PLAYING') {
             mainBtn.innerText = lang.breakBtn;
             mainBtn.classList.add('btn-active-float'); 
-            redrawBtn.style.display = 'none'; // Hide redraw while pulling
+            redrawBtn.style.display = 'none'; 
             let pIdx = currentPullMsgIdx % lang.pullMsgs.length;
             const msg = lang.pullMsgs[pIdx]; 
             quoteBox.innerText = msg;
         } else if (state === 'END') {
-            // When finished, show Back Button (Secondary) instead of Pull Again immediately if limit reached?
-            // Actually rule says: if limit reached, lock it.
-            // If just finished a pull, we incremented count.
-            
-            mainBtn.style.display = 'none'; // Hide main button in result view to focus on card
-            
+            mainBtn.style.display = 'none'; 
             let sIdx = currentSuccessMsgIdx % lang.successMsgs.length;
             let msg = lang.successMsgs[sIdx];
-            let formattedMsg = msg.replace("{user}", userSpan)
-                                .replace("{name}", selectedMember.name);
+            let formattedMsg = msg.replace("{user}", userSpan).replace("{name}", selectedMember.name);
             quoteBox.innerHTML = formattedMsg;
-            
             redrawBtn.innerText = lang.backBtn;
             redrawBtn.style.display = 'flex';
         }
@@ -755,182 +840,103 @@
                 initGalleryHome();
             }
         }
+        if(document.getElementById('favorites-view').classList.contains('active')) {
+            initFavorites();
+        }
     }
 
     /* --- GAME FLOW --- */
-    function handleMain() {
-        // Double check limit before pulling
-        if (dailyPullCount >= 3) return;
-        
-        if (state === 'IDLE') pull();
-    }
+    function handleMain() { if (dailyPullCount >= 3) return; if (state === 'IDLE') pull(); }
 
     function pull() {
         selectedMember = members[Math.floor(Math.random() * members.length)];
         selectedImg = selectedMember.imgs[Math.floor(Math.random() * selectedMember.imgs.length)];
-
-        // Preload
-        const imgPreload = new Image();
-        imgPreload.src = selectedImg;
-
+        const imgPreload = new Image(); imgPreload.src = selectedImg;
         currentPullMsgIdx = Math.floor(Math.random() * i18n[currentLang].pullMsgs.length);
-
         initPullScene();
-        
-        state = 'DRAWN';
-        updateUI();
+        state = 'DRAWN'; updateUI();
     }
 
-    // Renamed handleRedraw to resetGame since redraw is gone
     function resetGame() {
-        state = 'IDLE';
-        mainBtn.style.display = 'flex'; // Show main button again
-        
-        // Show Overlay again
+        state = 'IDLE'; mainBtn.style.display = 'flex'; 
         document.getElementById('overlay').style.display = 'flex';
-        
-        // Hide Scenes
         document.getElementById('pull-scene').classList.remove('active');
         document.getElementById('success-view').classList.remove('active');
-        
-        // Remove old sparkles
         const oldSparkle = document.querySelector('.sparkle-overlay');
         if (oldSparkle) oldSparkle.remove();
-
-        welcomeIdx = Math.floor(Math.random() * 10);
-        updateUI();
+        welcomeIdx = Math.floor(Math.random() * 10); updateUI();
     }
 
     /* --- PULL MECHANIC --- */
     function initPullScene() {
-        // Hide overlay to prevent blocking touches
         document.getElementById('overlay').style.display = 'none';
-    
-        const pullScene = document.getElementById('pull-scene');
-        pullScene.classList.add('active');
-        
+        const pullScene = document.getElementById('pull-scene'); pullScene.classList.add('active');
         const cardContainer = document.getElementById('pull-card-container');
         const cardImg = document.getElementById('pull-card-img');
-        
-        // Reset Position
         cardContainer.style.bottom = initialBottomPct + "%";
         cardContainer.classList.remove('extracted', 'snap-back');
-        
-        // Set Image
         cardImg.style.backgroundImage = `url('${selectedImg}')`;
-        
-        // Reset Pull Logic
         isDragging = false;
         
-        // Attach Events to the card container
-        cardContainer.addEventListener('mousedown', dragStart);
-        cardContainer.addEventListener('touchstart', dragStart, {passive: false});
-        
-        window.addEventListener('mousemove', dragMove);
-        window.addEventListener('touchmove', dragMove, {passive: false});
-        
-        window.addEventListener('mouseup', dragEnd);
-        window.addEventListener('touchend', dragEnd);
+        cardContainer.addEventListener('mousedown', dragStart); cardContainer.addEventListener('touchstart', dragStart, {passive: false});
+        window.addEventListener('mousemove', dragMove); window.addEventListener('touchmove', dragMove, {passive: false});
+        window.addEventListener('mouseup', dragEnd); window.addEventListener('touchend', dragEnd);
     }
 
     function dragStart(e) {
         if (state !== 'DRAWN' && state !== 'PLAYING') return;
-        state = 'PLAYING';
-        isDragging = true;
+        state = 'PLAYING'; isDragging = true;
         startY = e.touches ? e.touches[0].clientY : e.clientY;
-        
-        const cardContainer = document.getElementById('pull-card-container');
-        cardContainer.classList.remove('snap-back'); // Disable transition for direct control
-        
-        // Hide hint
+        document.getElementById('pull-card-container').classList.remove('snap-back');
         document.getElementById('pull-hint').style.display = 'none';
     }
 
     function dragMove(e) {
         if (!isDragging) return;
-        e.preventDefault(); // Prevent scroll
-        
+        e.preventDefault(); 
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        const deltaY = startY - clientY; // Positive = Moving Up
-        
-        // Convert pixels to % roughly based on window height
+        const deltaY = startY - clientY; 
         const winHeight = document.getElementById('card-window').clientHeight;
         const deltaPct = (deltaY / winHeight) * 100;
-        
-        // Current Bottom = Initial + Delta
-        // Limit: Can't go below initial
         let newBottom = initialBottomPct + deltaPct;
         if (newBottom < initialBottomPct) newBottom = initialBottomPct;
-        
-        const cardContainer = document.getElementById('pull-card-container');
-        cardContainer.style.bottom = newBottom + "%";
+        document.getElementById('pull-card-container').style.bottom = newBottom + "%";
     }
 
     function dragEnd(e) {
         if (!isDragging) return;
         isDragging = false;
-        
         const cardContainer = document.getElementById('pull-card-container');
-        // Check current style bottom
         const currentBottom = parseFloat(cardContainer.style.bottom);
-        
-        if (currentBottom > successThreshold) {
-            // Success! Pull out completely
-            finishPull();
-        } else {
-            // Snap back
-            cardContainer.classList.add('snap-back');
-            cardContainer.style.bottom = initialBottomPct + "%";
-            // Show hint again
-            setTimeout(() => {
-                if(state === 'PLAYING') document.getElementById('pull-hint').style.display = 'block';
-            }, 400);
+        if (currentBottom > successThreshold) { finishPull(); } 
+        else {
+            cardContainer.classList.add('snap-back'); cardContainer.style.bottom = initialBottomPct + "%";
+            setTimeout(() => { if(state === 'PLAYING') document.getElementById('pull-hint').style.display = 'block'; }, 400);
         }
     }
 
     function finishPull() {
-        // Remove listeners
         const cardContainer = document.getElementById('pull-card-container');
-        cardContainer.removeEventListener('mousedown', dragStart);
-        cardContainer.removeEventListener('touchstart', dragStart);
-        window.removeEventListener('mousemove', dragMove);
-        window.removeEventListener('touchmove', dragMove);
-        window.removeEventListener('mouseup', dragEnd);
-        window.removeEventListener('touchend', dragEnd);
+        cardContainer.removeEventListener('mousedown', dragStart); cardContainer.removeEventListener('touchstart', dragStart);
+        window.removeEventListener('mousemove', dragMove); window.removeEventListener('touchmove', dragMove);
+        window.removeEventListener('mouseup', dragEnd); window.removeEventListener('touchend', dragEnd);
 
-        // Animate out
-        cardContainer.classList.add('extracted');
-        cardContainer.style.bottom = "120%"; // Fly up and out
+        cardContainer.classList.add('extracted'); cardContainer.style.bottom = "120%"; 
+        dailyPullCount++; localStorage.setItem('cortis_daily_count', dailyPullCount);
         
-        // Commit Pull Count Here
-        dailyPullCount++;
-        localStorage.setItem('cortis_daily_count', dailyPullCount);
-        
-        // Trigger Success View after slight delay
         setTimeout(() => {
             document.getElementById('pull-scene').classList.remove('active');
-            
-            const successView = document.getElementById('success-view');
-            successView.classList.add('active');
-            
-            const finalCard = document.getElementById('final-card-img');
-            finalCard.style.backgroundImage = `url('${selectedImg}')`;
-            
-            // Add sparkles
-            const sparkle = document.createElement('div');
-            sparkle.className = 'sparkle-overlay';
+            document.getElementById('success-view').classList.add('active');
+            document.getElementById('final-card-img').style.backgroundImage = `url('${selectedImg}')`;
+            const sparkle = document.createElement('div'); sparkle.className = 'sparkle-overlay';
             document.getElementById('card-window').appendChild(sparkle);
-            
             currentSuccessMsgIdx = Math.floor(Math.random() * i18n[currentLang].successMsgs.length);
             unlockImage(selectedImg);
-            
-            state = 'END';
-            updateUI();
+            state = 'END'; updateUI();
         }, 300);
     }
 
-
-    /* --- GALLERY LOGIC --- */
+    /* --- GALLERY & FAVORITES --- */
     function unlockImage(url) {
         if (!collection.includes(url)) {
             collection.push(url);
@@ -938,52 +944,112 @@
         }
     }
 
-    function toggleGallery(show) {
-        const view = document.getElementById('gallery-view');
-        if (show) {
-            view.classList.add('active');
-            backToGalleryHome(); // Always reset to home when opening
+    function togglePin(url, element) {
+        if (!collection.includes(url)) { showToast(i18n[currentLang].pinLocked); return; }
+        const index = pinnedCollection.indexOf(url);
+        if (index > -1) {
+            pinnedCollection.splice(index, 1);
+            showToast(i18n[currentLang].pinRemoved);
+            element.classList.remove('pinned');
         } else {
-            view.classList.remove('active');
+            if (pinnedCollection.length >= 15) { showToast(i18n[currentLang].pinFull); return; }
+            pinnedCollection.push(url);
+            showToast(i18n[currentLang].pinAdded);
+            element.classList.add('pinned');
+        }
+        localStorage.setItem('cortis_pinned', JSON.stringify(pinnedCollection));
+    }
+
+    /* Avatar Upload */
+    function triggerAvatarUpload() {
+        document.getElementById('avatar-input').click();
+    }
+    
+    function handleAvatarUpload(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                userAvatar = e.target.result;
+                localStorage.setItem('cortis_avatar', userAvatar);
+                updateUI();
+            }
+            reader.readAsDataURL(input.files[0]);
         }
     }
 
-    function initGalleryHome() {
-        // Set Hero Image
-        const heroContainer = document.getElementById('gallery-hero-container');
-        heroContainer.innerHTML = `
-            <div class="gallery-hero" style="background-image: url('https://i.meee.com.tw/fyWyQH7.jpg')">
-                <div class="hero-content">
-                    <h2>CORTIS</h2>
-                    <p>Official Collection</p>
-                </div>
-            </div>
-        `;
+    /* Notes System */
+    function getNote(url) {
+        return notes[url] || "";
+    }
+    
+    function saveNote(url, text) {
+        notes[url] = text;
+        localStorage.setItem('cortis_notes', JSON.stringify(notes));
+    }
 
+    /* View Controls */
+    function openGallery() {
+        document.getElementById('gallery-view').classList.add('active');
+        backToGalleryHome();
+    }
+    
+    function openFavorites() {
+        document.getElementById('favorites-view').classList.add('active');
+        initFavorites();
+    }
+    
+    function closeAllViews() {
+        document.getElementById('gallery-view').classList.remove('active');
+        document.getElementById('favorites-view').classList.remove('active');
+    }
+
+    /* Favorites View Logic */
+    function initFavorites() {
+        const grid = document.getElementById('cabinet-grid');
+        grid.innerHTML = '';
+        const totalSlots = 15; // 3 rows * 5 cols
+        
+        for (let i = 0; i < totalSlots; i++) {
+            if (i < pinnedCollection.length) {
+                const url = pinnedCollection[i];
+                const slot = document.createElement('div');
+                slot.className = 'cab-slot filled';
+                slot.onclick = () => openPreview(url);
+                
+                let noteHtml = '';
+                if(notes[url]) noteHtml = `<div class="cab-note-icon">📝</div>`;
+                
+                slot.innerHTML = `<img src="${url}" class="cab-img" loading="lazy">${noteHtml}`;
+                grid.appendChild(slot);
+            } else {
+                const slot = document.createElement('div');
+                slot.className = 'cab-slot empty';
+                slot.innerHTML = `<span>${i18n[currentLang].emptySlot}</span>`;
+                grid.appendChild(slot);
+            }
+        }
+        updateUI(); // Refresh header info including stats
+    }
+
+    /* Gallery Logic */
+    function initGalleryHome() {
+        document.getElementById('gallery-hero-container').innerHTML = `
+            <div class="gallery-hero" style="background-image: url('https://i.meee.com.tw/fyWyQH7.jpg')">
+                <div class="hero-content"><h2>CORTIS</h2><p>Official Collection</p></div>
+            </div>`;
         const container = document.getElementById('member-list-container');
         container.innerHTML = '';
-        
         document.getElementById('g-header-sub').innerText = i18n[currentLang].gallerySub;
 
         members.forEach((member, index) => {
-            // Calculate stats
             let collected = 0;
             member.imgs.forEach(url => { if (collection.includes(url)) collected++; });
-            
             const card = document.createElement('div');
             card.className = 'member-card';
             card.onclick = () => openMemberGallery(index);
-            
-            const labelCollected = i18n[currentLang].galleryCollected;
-            
             card.innerHTML = `
-                <div class="m-info">
-                    <div class="m-name">${member.name}</div>
-                    <div class="m-stats">${labelCollected}: ${collected} / ${member.imgs.length}</div>
-                </div>
-                <div class="m-arrow">
-                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-                </div>
+                <div class="m-info"><div class="m-name">${member.name}</div><div class="m-stats">${i18n[currentLang].galleryCollected}: ${collected} / ${member.imgs.length}</div></div>
+                <div class="m-arrow"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></div>
             `;
             container.appendChild(card);
         });
@@ -992,43 +1058,27 @@
     function openMemberGallery(index) {
         activeGalleryTab = index;
         const member = members[index];
-        
-        // Animations
         document.getElementById('gallery-home').style.transform = 'translateX(-20%)';
         document.getElementById('gallery-home').style.opacity = '0';
-        
         const detail = document.getElementById('gallery-detail');
         detail.classList.add('active');
-        
-        // Header updates
         updateGalleryHeader(member);
-        
-        // Toggle controls
-        document.getElementById('g-ctrl-home').style.display = 'none';
         document.getElementById('g-ctrl-back').style.display = 'block';
-        
         renderGalleryGrid(member);
     }
     
     function backToGalleryHome() {
-        // Reset animations
         document.getElementById('gallery-home').style.transform = 'translateX(0)';
         document.getElementById('gallery-home').style.opacity = '1';
-        
         const detail = document.getElementById('gallery-detail');
         detail.classList.remove('active');
-        
-        // Controls
-        document.getElementById('g-ctrl-home').style.display = 'block';
         document.getElementById('g-ctrl-back').style.display = 'none';
-        
         initGalleryHome();
     }
     
     function updateGalleryHeader(member) {
         let collected = 0;
         member.imgs.forEach(url => { if (collection.includes(url)) collected++; });
-        
         document.getElementById('g-header-title').innerText = member.name;
         document.getElementById('g-header-sub').innerText = `${collected} / ${member.imgs.length}`;
     }
@@ -1036,124 +1086,127 @@
     function renderGalleryGrid(member) {
         const grid = document.getElementById('gallery-grid');
         grid.innerHTML = '';
-        
         member.imgs.forEach(url => {
             const isUnlocked = collection.includes(url);
-            
+            const isPinned = pinnedCollection.includes(url);
             const item = document.createElement('div');
-            // Add gloss-effect class if unlocked
-            item.className = `g-item ${isUnlocked ? 'unlocked gloss-effect' : 'locked'}`;
+            item.className = `g-item ${isUnlocked ? 'unlocked gloss-effect' : 'locked'} ${isPinned ? 'pinned' : ''}`;
             
-            // Check if just unlocked
-            if (isUnlocked && selectedImg === url && state === 'END') {
-                item.classList.add('just-unlocked');
-            }
+            if (isUnlocked && selectedImg === url && state === 'END') item.classList.add('just-unlocked');
 
-            const img = document.createElement('img');
-            img.className = 'g-img';
-            img.loading = "lazy";
-            img.src = url;
-            
+            const img = document.createElement('img'); img.className = 'g-img'; img.loading = "lazy"; img.src = url;
             item.appendChild(img);
 
             if (!isUnlocked) {
-                const lockOverlay = document.createElement('div');
-                lockOverlay.className = 'g-lock-icon';
+                const lockOverlay = document.createElement('div'); lockOverlay.className = 'g-lock-icon';
                 lockOverlay.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>`;
                 item.appendChild(lockOverlay);
-                
-                // Click event for locked
-                item.onclick = () => showToast();
+                item.onclick = () => showToast(i18n[currentLang].galleryLocked);
             } else {
-                // Click event for unlocked
-                item.onclick = () => openPreview(url);
-                
-                const badge = document.createElement('div');
-                badge.className = 'new-badge';
-                badge.innerText = "NEW";
+                img.onclick = () => openPreview(url);
+                const pinBtn = document.createElement('button'); pinBtn.className = 'pin-btn';
+                pinBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`;
+                pinBtn.onclick = (e) => { e.stopPropagation(); togglePin(url, item); };
+                item.appendChild(pinBtn);
+                const badge = document.createElement('div'); badge.className = 'new-badge'; badge.innerText = "NEW";
                 item.appendChild(badge);
             }
-
             grid.appendChild(item);
         });
     }
     
-    function showToast() {
-        const toast = document.getElementById('toast');
-        toast.innerText = i18n[currentLang].galleryLocked;
-        toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 2000);
+    function showToast(msg) {
+        const toast = document.getElementById('toast'); toast.innerText = msg; toast.classList.add('show');
+        setTimeout(() => { toast.classList.remove('show'); }, 2000);
     }
 
-    /* --- PREVIEW (LIGHTBOX) FUNCTIONS --- */
+    /* --- COMMON --- */
     function openPreview(url) {
         const modal = document.getElementById('image-preview-modal');
         const img = document.getElementById('preview-img');
-        img.src = url;
+        const noteInput = document.getElementById('note-input');
+        
+        img.src = url; 
+        
+        // Load note
+        noteInput.value = getNote(url);
+        // Save note on change
+        noteInput.oninput = function() {
+            saveNote(url, this.value);
+            // If viewing in favs, refresh to show icon
+            if(document.getElementById('favorites-view').classList.contains('active')) {
+                initFavorites();
+            }
+        };
+
         modal.classList.add('active');
     }
+    function closePreview() { document.getElementById('image-preview-modal').classList.remove('active'); }
 
-    function closePreview() {
-        const modal = document.getElementById('image-preview-modal');
-        modal.classList.remove('active');
+    /* --- LOGIN & BACKGROUND --- */
+    function initBackground() {
+        const types = ['bg-particles', 'bg-gradient', 'bg-emojis'];
+        const choice = types[Math.floor(Math.random() * types.length)];
+        const bg = document.getElementById('login-bg'); bg.className = choice;
+        
+        if (choice === 'bg-particles') {
+            for (let i = 0; i < 15; i++) {
+                const p = document.createElement('div'); p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%';
+                p.style.width = Math.random() * 10 + 5 + 'px'; p.style.height = p.style.width;
+                p.style.animationDuration = Math.random() * 10 + 5 + 's';
+                bg.appendChild(p);
+            }
+        } else if (choice === 'bg-emojis') {
+            const emojis = ['🐕‍🦺', '🦅', '🐢', '🦊', '🐶'];
+            for (let i = 0; i < 10; i++) {
+                const e = document.createElement('div'); e.className = 'emoji-float';
+                e.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+                e.style.left = Math.random() * 90 + '%'; e.style.top = Math.random() * 90 + '%';
+                e.style.animationDelay = Math.random() * 5 + 's';
+                bg.appendChild(e);
+            }
+        }
     }
 
-    /* --- USER NAME LOGIC --- */
     function checkName() {
         const modal = document.getElementById('name-modal');
+        const lang = i18n[currentLang];
+        initBackground();
         if (!userName) {
-            modal.classList.add('show');
-            modal.style.display = 'flex';
-        } else {
-            modal.style.display = 'none';
-        }
+            modal.classList.add('show'); modal.style.display = 'flex';
+            document.getElementById('modal-welcome-title').innerText = "WELCOME";
+            document.getElementById('modal-intro').innerHTML = lang.nameIntroNew;
+        } else { modal.style.display = 'none'; }
     }
 
     function saveName() {
         const input = document.getElementById('user-name-input');
         const val = input.value.trim();
         if (!val) return;
-        
-        userName = val;
-        localStorage.setItem('cortis_user_name', userName);
-
+        userName = val; localStorage.setItem('cortis_user_name', userName);
         const modal = document.getElementById('name-modal');
         modal.classList.remove('show');
-        setTimeout(() => {
-            modal.style.display = 'none';
-            updateUI(); 
-        }, 300);
+        setTimeout(() => { modal.style.display = 'none'; updateUI(); }, 500);
     }
 
     function resetUserName() {
         const modal = document.getElementById('name-modal');
         const input = document.getElementById('user-name-input');
-        
-        modal.style.display = 'flex';
-        setTimeout(() => {
-            modal.classList.add('show');
-            input.value = userName;
-            input.focus();
-        }, 10);
+        const lang = i18n[currentLang];
+        initBackground(); modal.style.display = 'flex';
+        document.getElementById('modal-welcome-title').innerText = "WELCOME BACK";
+        document.getElementById('modal-intro').innerHTML = lang.nameIntroBack.replace('{user}', userName);
+        setTimeout(() => { modal.classList.add('show'); input.value = userName; input.focus(); }, 10);
     }
 
     /* --- BOOT --- */
     document.addEventListener('gesturestart', (e) => e.preventDefault());
-    
-    // Global touch fix
     document.body.addEventListener('touchmove', function(e) {
-        // Prevent default only if we are not scrolling gallery
-        if(!e.target.closest('.g-page') && !e.target.closest('#pull-scene')) {
-            e.preventDefault();
-        }
+        if(!e.target.closest('.g-page') && !e.target.closest('#pull-scene')) { e.preventDefault(); }
     }, { passive: false });
 
-    window.onload = () => {
-        checkName(); 
-        updateUI(); 
-    };
+    window.onload = () => { checkName(); updateUI(); };
 </script>
 </body>
 </html>
