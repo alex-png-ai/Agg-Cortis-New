@@ -3,6 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- PWA Settings -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="CORTIS Daily">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Dynamic Manifest for PWA (Data URI) -->
+    <link rel="manifest" id="manifest-placeholder">
+
+    <!-- Apple Touch Icon (Uses the user avatar placeholder for now) -->
+    <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==">
+
     <title>Your Daily CORTIS!</title>
     <style>
         :root {
@@ -77,7 +90,7 @@
         .app.lang-en #label-en { color: var(--mid-grey); }
         .app.lang-en #label-zh { color: #aaa; }
 
-        /* --- Gallery & Favorites Buttons --- */
+        /* --- Gallery, Favorites & Install Buttons --- */
         .icon-btn {
             width: 32px; height: 32px;
             display: flex; align-items: center; justify-content: center;
@@ -90,6 +103,18 @@
         
         .fav-btn { color: var(--gold-dark); background: #fff8e1; }
         .fav-btn svg { fill: var(--gold); }
+
+        /* Install App Button Animation */
+        .install-btn {
+            color: #fff; background: var(--mid-grey);
+            animation: pulse-install 2s infinite;
+            display: none; /* Hidden by default, shown by JS */
+        }
+        @keyframes pulse-install {
+            0% { box-shadow: 0 0 0 0 rgba(73, 72, 72, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(73, 72, 72, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(73, 72, 72, 0); }
+        }
 
         /* --- Main Content --- */
         #quote { 
@@ -441,6 +466,33 @@
             text-shadow: 0 1px 2px black;
         }
 
+        /* --- INSTALL GUIDE MODAL (iOS) --- */
+        #install-modal {
+            position: fixed; inset: 0; z-index: 5000; background: rgba(0,0,0,0.8);
+            display: none; align-items: flex-end; justify-content: center;
+            padding-bottom: 20px; opacity: 0; transition: opacity 0.3s;
+        }
+        #install-modal.active { display: flex; opacity: 1; }
+        
+        .install-guide {
+            background: #fff; width: 90%; max-width: 400px; padding: 20px;
+            border-radius: 20px; text-align: center; position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3); animation: slide-up-guide 0.4s ease-out;
+        }
+        @keyframes slide-up-guide { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .guide-arrow {
+            position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%) rotate(45deg);
+            width: 20px; height: 20px; background: #fff;
+        }
+        .guide-icon { font-size: 2rem; margin-bottom: 10px; }
+        .guide-title { font-weight: 800; color: var(--mid-grey); margin-bottom: 10px; }
+        .guide-steps { font-size: 0.9rem; color: #555; line-height: 1.6; text-align: left; background: #f5f5f5; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+        .guide-step { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .guide-step:last-child { margin-bottom: 0; }
+        .share-icon-img { width: 20px; vertical-align: middle; }
+        .close-guide-btn { width: 100%; padding: 12px; background: var(--mid-grey); color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
+
         /* --- PREVIEW MODAL & NOTE --- */
         #image-preview-modal { position: fixed; inset: 0; z-index: 4000; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
         #image-preview-modal.active { display: flex; opacity: 1; }
@@ -508,6 +560,21 @@
             <div class="note-label">📝 Mood Note</div>
             <textarea id="note-input" rows="1" maxlength="50" placeholder="Write something..."></textarea>
         </div>
+    </div>
+</div>
+
+<!-- iOS Install Guide Modal -->
+<div id="install-modal" onclick="closeInstallGuide()">
+    <div class="install-guide" onclick="event.stopPropagation()">
+        <div class="guide-icon">📲</div>
+        <div class="guide-title">加入主畫面，體驗全螢幕 App！</div>
+        <div class="guide-steps">
+            <div class="guide-step">1. 點擊瀏覽器下方的 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23007AFF'%3E%3Cpath d='M16 5l-4-4-4 4h3v6h2V5h3zM7 11h2v6h6v-6h2v8H7v-8z'/%3E%3C/svg%3E" class="share-icon-img"> <b>分享按鈕</b></div>
+            <div class="guide-step">2. 往下滑找到 <b>「加入主畫面」</b></div>
+            <div class="guide-step">3. 點擊 <b>「加入」</b> 即可！</div>
+        </div>
+        <button class="close-guide-btn" onclick="closeInstallGuide()">知道了</button>
+        <div class="guide-arrow"></div>
     </div>
 </div>
 
@@ -595,6 +662,11 @@
         </div>
         <h1 id="title-main">Your Daily CORTIS!</h1>
         <div class="header-side right">
+            <!-- Install Button -->
+            <button class="icon-btn install-btn" id="install-btn" onclick="handleInstall()">
+                <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            </button>
+            
             <div class="lang-switch-pill" onclick="toggleLanguage()">
                 <span id="label-zh">中</span><span id="label-en">EN</span><div class="pill-thumb"></div>
             </div>
@@ -682,7 +754,7 @@
             nameIntroBack: "Hi, {user}!<br>Welcome back! Ready for today?",
             namePrompt: "Your Nickname",
             namePlaceholder: "Enter nickname...",
-            nameBtn: "Enter",
+            nameBtn: "Let's Go",
             galleryTitle: "Gallery",
             gallerySub: "Official Collection",
             galleryLocked: "Locked. Pull to unlock!",
@@ -747,6 +819,69 @@
 
     const mainBtn = document.getElementById('main-btn'), redrawBtn = document.getElementById('redraw-btn');
     const quoteBox = document.getElementById('quote'), appCont = document.getElementById('app-container');
+
+    /* --- PWA Manifest Generation (Data URI) --- */
+    function generateManifest() {
+        const manifest = {
+            "name": "CORTIS Daily",
+            "short_name": "CORTIS",
+            "start_url": ".",
+            "display": "standalone",
+            "background_color": "#ffffff",
+            "theme_color": "#ffffff",
+            "icons": [{
+                "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23494848'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' font-size='200' fill='white' font-family='sans-serif' font-weight='bold'%3EC%3C/text%3E%3C/svg%3E",
+                "sizes": "512x512",
+                "type": "image/svg+xml"
+            }]
+        };
+        const stringManifest = JSON.stringify(manifest);
+        const blob = new Blob([stringManifest], {type: 'application/json'});
+        const manifestURL = URL.createObjectURL(blob);
+        document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
+    }
+    generateManifest();
+
+    /* --- PWA INSTALL LOGIC --- */
+    let deferredPrompt;
+    
+    // Listen for install prompt (Android/Chrome)
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        // Show install button for Android
+        document.getElementById('install-btn').style.display = 'flex';
+    });
+
+    // Detect iOS
+    const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+    // Detect Standalone (already installed)
+    const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+
+    // Show button for iOS if not standalone
+    if (isIos && !isStandalone) {
+        document.getElementById('install-btn').style.display = 'flex';
+    }
+
+    function handleInstall() {
+        if (deferredPrompt) {
+            // Android/Chrome logic
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    document.getElementById('install-btn').style.display = 'none';
+                }
+                deferredPrompt = null;
+            });
+        } else if (isIos) {
+            // iOS logic: Show guide
+            document.getElementById('install-modal').classList.add('active');
+        }
+    }
+
+    function closeInstallGuide() {
+        document.getElementById('install-modal').classList.remove('active');
+    }
 
     /* --- UI FUNCTIONS --- */
     function updateUI() {
