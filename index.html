@@ -3,19 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <!-- PWA Settings -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="CORTIS Daily">
-    <meta name="theme-color" content="#ffffff">
-    
-    <!-- Dynamic Manifest for PWA (Data URI) -->
-    <link rel="manifest" id="manifest-placeholder">
-
-    <!-- Apple Touch Icon (Uses the user avatar placeholder for now) -->
-    <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==">
-
     <title>Your Daily CORTIS!</title>
     <style>
         :root {
@@ -64,6 +51,8 @@
             flex: 2; margin: 0; font-size: clamp(1.1rem, 5vw, 1.4rem); 
             font-weight: 900; text-align: center; color: var(--mid-grey);
             white-space: nowrap; letter-spacing: -0.5px;
+            user-select: none;
+            cursor: default;
         }
 
         /* --- Language Switcher --- */
@@ -90,7 +79,7 @@
         .app.lang-en #label-en { color: var(--mid-grey); }
         .app.lang-en #label-zh { color: #aaa; }
 
-        /* --- Gallery, Favorites & Install Buttons --- */
+        /* --- Gallery & Favorites Buttons --- */
         .icon-btn {
             width: 32px; height: 32px;
             display: flex; align-items: center; justify-content: center;
@@ -103,18 +92,6 @@
         
         .fav-btn { color: var(--gold-dark); background: #fff8e1; }
         .fav-btn svg { fill: var(--gold); }
-
-        /* Install App Button Animation */
-        .install-btn {
-            color: #fff; background: var(--mid-grey);
-            animation: pulse-install 2s infinite;
-            display: none; /* Hidden by default, shown by JS */
-        }
-        @keyframes pulse-install {
-            0% { box-shadow: 0 0 0 0 rgba(73, 72, 72, 0.4); }
-            70% { box-shadow: 0 0 0 6px rgba(73, 72, 72, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(73, 72, 72, 0); }
-        }
 
         /* --- Main Content --- */
         #quote { 
@@ -466,33 +443,6 @@
             text-shadow: 0 1px 2px black;
         }
 
-        /* --- INSTALL GUIDE MODAL (iOS) --- */
-        #install-modal {
-            position: fixed; inset: 0; z-index: 5000; background: rgba(0,0,0,0.8);
-            display: none; align-items: flex-end; justify-content: center;
-            padding-bottom: 20px; opacity: 0; transition: opacity 0.3s;
-        }
-        #install-modal.active { display: flex; opacity: 1; }
-        
-        .install-guide {
-            background: #fff; width: 90%; max-width: 400px; padding: 20px;
-            border-radius: 20px; text-align: center; position: relative;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3); animation: slide-up-guide 0.4s ease-out;
-        }
-        @keyframes slide-up-guide { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
-        .guide-arrow {
-            position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%) rotate(45deg);
-            width: 20px; height: 20px; background: #fff;
-        }
-        .guide-icon { font-size: 2rem; margin-bottom: 10px; }
-        .guide-title { font-weight: 800; color: var(--mid-grey); margin-bottom: 10px; }
-        .guide-steps { font-size: 0.9rem; color: #555; line-height: 1.6; text-align: left; background: #f5f5f5; padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-        .guide-step { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .guide-step:last-child { margin-bottom: 0; }
-        .share-icon-img { width: 20px; vertical-align: middle; }
-        .close-guide-btn { width: 100%; padding: 12px; background: var(--mid-grey); color: #fff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
-
         /* --- PREVIEW MODAL & NOTE --- */
         #image-preview-modal { position: fixed; inset: 0; z-index: 4000; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
         #image-preview-modal.active { display: flex; opacity: 1; }
@@ -530,7 +480,7 @@
         
         #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(30, 30, 30, 0.9); color: white; padding: 10px 20px; border-radius: 30px; font-size: 0.8rem; font-weight: 600; pointer-events: none; opacity: 0; transition: opacity 0.3s; z-index: 5000; text-align: center; white-space: nowrap; }
         #toast.show { opacity: 1; }
-        
+
     </style>
 </head>
 <body class="lang-zh">
@@ -560,21 +510,6 @@
             <div class="note-label">📝 Mood Note</div>
             <textarea id="note-input" rows="1" maxlength="50" placeholder="Write something..."></textarea>
         </div>
-    </div>
-</div>
-
-<!-- iOS Install Guide Modal -->
-<div id="install-modal" onclick="closeInstallGuide()">
-    <div class="install-guide" onclick="event.stopPropagation()">
-        <div class="guide-icon">📲</div>
-        <div class="guide-title">加入主畫面，體驗全螢幕 App！</div>
-        <div class="guide-steps">
-            <div class="guide-step">1. 點擊瀏覽器下方的 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23007AFF'%3E%3Cpath d='M16 5l-4-4-4 4h3v6h2V5h3zM7 11h2v6h6v-6h2v8H7v-8z'/%3E%3C/svg%3E" class="share-icon-img"> <b>分享按鈕</b></div>
-            <div class="guide-step">2. 往下滑找到 <b>「加入主畫面」</b></div>
-            <div class="guide-step">3. 點擊 <b>「加入」</b> 即可！</div>
-        </div>
-        <button class="close-guide-btn" onclick="closeInstallGuide()">知道了</button>
-        <div class="guide-arrow"></div>
     </div>
 </div>
 
@@ -662,11 +597,6 @@
         </div>
         <h1 id="title-main">Your Daily CORTIS!</h1>
         <div class="header-side right">
-            <!-- Install Button -->
-            <button class="icon-btn install-btn" id="install-btn" onclick="handleInstall()">
-                <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-            </button>
-            
             <div class="lang-switch-pill" onclick="toggleLanguage()">
                 <span id="label-zh">中</span><span id="label-en">EN</span><div class="pill-thumb"></div>
             </div>
@@ -754,7 +684,7 @@
             nameIntroBack: "Hi, {user}!<br>Welcome back! Ready for today?",
             namePrompt: "Your Nickname",
             namePlaceholder: "Enter nickname...",
-            nameBtn: "Let's Go",
+            nameBtn: "Enter",
             galleryTitle: "Gallery",
             gallerySub: "Official Collection",
             galleryLocked: "Locked. Pull to unlock!",
@@ -777,12 +707,16 @@
         }
     };
 
+    // Helper to generate image URLs: name (lowercase in url), count
+    const generateImages = (name, count) => 
+        Array.from({length: count}, (_, i) => `https://cortis-cards.vercel.app/images/${name}/${String(i+1).padStart(3, '0')}.jpeg`);
+
     const members = [
-        { name: 'MARTIN', imgs: ['https://i.meee.com.tw/MOYXYYH.jpg', 'https://i.meee.com.tw/SEXIiU3.jpg', 'https://i.meee.com.tw/zFRjemR.jpg', 'https://i.meee.com.tw/nybbReK.jpg', 'https://i.meee.com.tw/BFcRZlJ.jpg', 'https://i.meee.com.tw/Pc2u4J8.jpg', 'https://i.meee.com.tw/RnUITpD.jpg', 'https://i.meee.com.tw/Zb8FRRs.jpg', 'https://i.meee.com.tw/ZgqWbdW.jpg', 'https://i.meee.com.tw/JPuCVMj.jpg', 'https://i.meee.com.tw/cGxbgRL.jpg', 'https://i.meee.com.tw/WZ9HKOt.jpg', 'https://i.meee.com.tw/EAhkLPa.jpg', 'https://i.meee.com.tw/CHRCiwv.jpg', 'https://i.meee.com.tw/K4acoX3.jpg', 'https://i.meee.com.tw/AgqCwUG.jpg', 'https://i.meee.com.tw/IBiP9Xm.jpg', 'https://i.meee.com.tw/0pdENOw.jpg', 'https://i.meee.com.tw/wu2sbnG.jpg', 'https://i.meee.com.tw/fPwFyVD.jpg', 'https://i.meee.com.tw/VcFbdLs.jpg', 'https://i.meee.com.tw/qCtj1y3.jpg', 'https://i.meee.com.tw/IP97a5i.jpg', 'https://i.meee.com.tw/0gKJbSE.jpg', 'https://i.meee.com.tw/LHFUSDc.jpg', 'https://i.meee.com.tw/9udlrZt.jpg', 'https://i.meee.com.tw/63a3eGG.jpg', 'https://i.meee.com.tw/QLI0KOO.jpg', 'https://i.meee.com.tw/FBfCScg.jpg', 'https://i.meee.com.tw/HKrjhy2.jpg', 'https://i.meee.com.tw/nBHIUqX.jpg', 'https://i.meee.com.tw/vGQkP0l.jpg', 'https://i.meee.com.tw/npm2G9Y.jpg', 'https://i.meee.com.tw/3pEHph6.jpg', 'https://i.meee.com.tw/wbFC98x.jpg', 'https://i.meee.com.tw/s7uRU3X.jpg', 'https://i.meee.com.tw/GpmAtDL.jpg', 'https://i.meee.com.tw/lb7RCBk.jpg', 'https://i.meee.com.tw/BqGhZtG.jpg', 'https://i.meee.com.tw/OiaypWz.jpg', 'https://i.meee.com.tw/IBE84U7.jpg'] },
-        { name: 'JAMES', imgs: ['https://i.meee.com.tw/CVBsBfd.jpg', 'https://i.meee.com.tw/xtAhmPX.jpg', 'https://i.meee.com.tw/3G5NxcV.jpg', 'https://i.meee.com.tw/kA8DG3b.jpg', 'https://i.meee.com.tw/VMDbJX7.jpg', 'https://i.meee.com.tw/agwNTow.jpg', 'https://i.meee.com.tw/Ipfv0L5.jpg', 'https://i.meee.com.tw/08xbMYK.jpg', 'https://i.meee.com.tw/BMFBEF9.jpg', 'https://i.meee.com.tw/443BjvM.jpg', 'https://i.meee.com.tw/NyCrZFY.jpg', 'https://i.meee.com.tw/nqHzylv.jpg', 'https://i.meee.com.tw/HdAbga0.jpg', 'https://i.meee.com.tw/tQ3LFv8.jpg', 'https://i.meee.com.tw/Pgf02by.jpg', 'https://i.meee.com.tw/tUHP9eq.jpg', 'https://i.meee.com.tw/cFAFXHL.jpg', 'https://i.meee.com.tw/iw81cbd.jpg', 'https://i.meee.com.tw/ovceTuk.jpg', 'https://i.meee.com.tw/7wCu2Ne.jpg', 'https://i.meee.com.tw/b9zN4u7.jpg', 'https://i.meee.com.tw/GatiyNi.jpg', 'https://i.meee.com.tw/09mgKIc.jpg', 'https://i.meee.com.tw/OhvD8d6.jpg', 'https://i.meee.com.tw/xmxsUOU.jpg', 'https://i.meee.com.tw/I9kGYfx.jpg', 'https://i.meee.com.tw/qOU6Jq5.jpg', 'https://i.meee.com.tw/WA6Owsw.jpg', 'https://i.meee.com.tw/i9oRArI.jpg', 'https://i.meee.com.tw/jPwvfEK.jpg', 'https://i.meee.com.tw/uWJs9sT.jpg', 'https://i.meee.com.tw/N3DAwqP.jpg', 'https://i.meee.com.tw/Ak8oEDk.jpg', 'https://i.meee.com.tw/N3J3tmF.jpg', 'https://i.meee.com.tw/Zni4ahH.jpg', 'https://i.meee.com.tw/OzvQZvK.jpg', 'https://i.meee.com.tw/oAhHC9H.jpg', 'https://i.meee.com.tw/YPibdR6.jpg', 'https://i.meee.com.tw/GGAf8Wh.jpg', 'https://i.meee.com.tw/AaNm91y.jpg', 'https://i.meee.com.tw/vnOtoNj.jpg'] },
-        { name: 'JUHOON', imgs: ['https://i.meee.com.tw/NcdYMX7.jpg', 'https://i.meee.com.tw/J9lZu2w.jpg', 'https://i.meee.com.tw/2urGipe.jpg', 'https://i.meee.com.tw/Etfw5vh.jpg', 'https://i.meee.com.tw/XPZy2Ax.jpg', 'https://i.meee.com.tw/idAqO9Z.jpg', 'https://i.meee.com.tw/jG1kN6o.jpg', 'https://i.meee.com.tw/6k15xnq.jpg', 'https://i.meee.com.tw/ZuWz8u9.jpg', 'https://i.meee.com.tw/NiWzAif.jpg', 'https://i.meee.com.tw/XfHBS3X.jpg', 'https://i.meee.com.tw/QLDYDN5.jpg', 'https://i.meee.com.tw/RdO84FD.jpg', 'https://i.meee.com.tw/iYWyYIV.jpg', 'https://i.meee.com.tw/LyHeJwT.jpg', 'https://i.meee.com.tw/6Iu0lc0.jpg', 'https://i.meee.com.tw/cOiAmF3.jpg', 'https://i.meee.com.tw/CPNWL6a.jpg', 'https://i.meee.com.tw/F8KcTfr.jpg', 'https://i.meee.com.tw/thhW0yr.jpg', 'https://i.meee.com.tw/V7Fw2Fx.jpg', 'https://i.meee.com.tw/2RUrC2b.jpg', 'https://i.meee.com.tw/RtZyWdr.jpg', 'https://i.meee.com.tw/FpqvDsF.jpg', 'https://i.meee.com.tw/rcvG6eh.jpg', 'https://i.meee.com.tw/VkCgEja.jpg', 'https://i.meee.com.tw/7xURHqc.jpg', 'https://i.meee.com.tw/lGZ6xBQ.jpg', 'https://i.meee.com.tw/kqPD6I4.jpg', 'https://i.meee.com.tw/26CRqzz.jpg', 'https://i.meee.com.tw/hrxaA4d.jpg', 'https://i.meee.com.tw/GJcXP2N.jpg', 'https://i.meee.com.tw/ZbPgm5R.jpg', 'https://i.meee.com.tw/62oX3v0.jpg', 'https://i.meee.com.tw/Mqfwqov.jpg', 'https://i.meee.com.tw/T9M6c8T.jpg', 'https://i.meee.com.tw/QTcLlEG.jpg', 'https://i.meee.com.tw/L0hUH8u.jpg', 'https://i.meee.com.tw/9qdsKFy.jpg', 'https://i.meee.com.tw/1Dn8QUo.jpg', 'https://i.meee.com.tw/PYgaVcq.jpg', 'https://i.meee.com.tw/YvR226F.jpg', 'https://i.meee.com.tw/1IdLg4S.jpg', 'https://i.meee.com.tw/ErLs49o.jpg', 'https://i.meee.com.tw/husx8Dq.jpg', 'https://i.meee.com.tw/K6IR9yB.jpg', 'https://i.meee.com.tw/GpB4tTP.jpg', 'https://i.meee.com.tw/Amke524.jpg', 'https://i.meee.com.tw/ZHnFfuD.jpg', 'https://i.meee.com.tw/K0Q3Zk7.jpg', 'https://i.meee.com.tw/Xo5PIUE.jpg', 'https://i.meee.com.tw/FeXoANn.jpg', 'https://i.meee.com.tw/Ebm0NrV.jpg', 'https://i.meee.com.tw/tmYn8Oj.jpg', 'https://i.meee.com.tw/ScydKUc.jpg', 'https://i.meee.com.tw/utfFpEM.jpg', 'https://i.meee.com.tw/W1PhhsQ.jpg', 'https://i.meee.com.tw/NhJU1BN.jpg', 'https://i.meee.com.tw/Pu6Z5jy.jpg', 'https://i.meee.com.tw/KqcC0Cz.jpg', 'https://i.meee.com.tw/YVwBTKD.jpg', 'https://i.meee.com.tw/1XBpYVx.jpg', 'https://i.meee.com.tw/IKdX7QQ.jpg', 'https://i.meee.com.tw/DyTlxOr.jpg', 'https://i.meee.com.tw/Vc9GLcy.jpg', 'https://i.meee.com.tw/RDG0KYL.jpg', 'https://i.meee.com.tw/BEJVAjp.jpg', 'https://i.meee.com.tw/CeT6PFE.jpg', 'https://i.meee.com.tw/hGX7zQl.jpg', 'https://i.meee.com.tw/ehyVDWO.jpg', 'https://i.meee.com.tw/kpXdyd8.jpg'] },
-        { name: 'SEONGHYEON', imgs: ['https://i.meee.com.tw/BIumaWw.jpg', 'https://i.meee.com.tw/1EVXMKA.jpg', 'https://i.meee.com.tw/ovZEBqB.jpg', 'https://i.meee.com.tw/stTT15O.jpg', 'https://i.meee.com.tw/4BkHrGv.jpg', 'https://i.meee.com.tw/IttS1Qk.jpg', 'https://i.meee.com.tw/zEEp4hj.jpg', 'https://i.meee.com.tw/Wmvt06M.jpg', 'https://i.meee.com.tw/HC1zIaI.jpg', 'https://i.meee.com.tw/48UcC4j.jpg', 'https://i.meee.com.tw/7bjuACv.jpg', 'https://i.meee.com.tw/4SA8Zfn.jpg', 'https://i.meee.com.tw/50ugDvH.jpg', 'https://i.meee.com.tw/R3gWDCJ.jpg', 'https://i.meee.com.tw/OxAENiY.jpg', 'https://i.meee.com.tw/PncXEQb.jpg', 'https://i.meee.com.tw/dFGOhkJ.jpg', 'https://i.meee.com.tw/wJ0yrIp.jpg', 'https://i.meee.com.tw/pvDLmWS.jpg', 'https://i.meee.com.tw/cBpEnL7.jpg', 'https://i.meee.com.tw/iGx6FU4.jpg', 'https://i.meee.com.tw/uVaK1ZC.jpg', 'https://i.meee.com.tw/Coe2Xji.jpg', 'https://i.meee.com.tw/rmLojta.jpg', 'https://i.meee.com.tw/fUyJ5uZ.jpg', 'https://i.meee.com.tw/pTTflJj.jpg', 'https://i.meee.com.tw/G9VS9NE.jpg', 'https://i.meee.com.tw/7RTGCmf.jpg', 'https://i.meee.com.tw/EgTENpf.jpg', 'https://i.meee.com.tw/ocU7do0.jpg', 'https://i.meee.com.tw/XdMepIA.jpg', 'https://i.meee.com.tw/MMlSVTC.jpg', 'https://i.meee.com.tw/4diqcVU.jpg', 'https://i.meee.com.tw/LobjZF4.jpg', 'https://i.meee.com.tw/E7m4FCB.jpg', 'https://i.meee.com.tw/l9T7qtd.jpg', 'https://i.meee.com.tw/DMGbGxW.jpg', 'https://i.meee.com.tw/zzR5FSh.jpg', 'https://i.meee.com.tw/bPUxjlO.jpg', 'https://i.meee.com.tw/DDetHVG.jpg', 'https://i.meee.com.tw/Lqddbrl.jpg'] },
-        { name: 'KEONHO', imgs: ['https://i.meee.com.tw/RifsdWi.jpg', 'https://i.meee.com.tw/h6sBuPV.jpg', 'https://i.meee.com.tw/orrhHJ9.jpg', 'https://i.meee.com.tw/ulzgelY.jpg', 'https://i.meee.com.tw/hrasay4.jpg', 'https://i.meee.com.tw/KdBrKDx.jpg', 'https://i.meee.com.tw/us2KGpy.jpg', 'https://i.meee.com.tw/UwUBIUD.jpg', 'https://i.meee.com.tw/gF9niFB.jpg', 'https://i.meee.com.tw/CRHCpB1.jpg', 'https://i.meee.com.tw/BdkFp7E.jpg', 'https://i.meee.com.tw/EpSMghF.jpg', 'https://i.meee.com.tw/IiOHTxO.jpg', 'https://i.meee.com.tw/FKtO9gB.jpg', 'https://i.meee.com.tw/uvavWIW.jpg', 'https://i.meee.com.tw/ey4XbGj.jpg', 'https://i.meee.com.tw/yFoEH6Y.jpg', 'https://i.meee.com.tw/cyAyduB.jpg', 'https://i.meee.com.tw/pzm48tI.jpg', 'https://i.meee.com.tw/qGoDBGL.jpg', 'https://i.meee.com.tw/OvezIXK.jpg', 'https://i.meee.com.tw/lc2cvnR.jpg', 'https://i.meee.com.tw/6EIUcNn.jpg', 'https://i.meee.com.tw/EM9l1yO.jpg', 'https://i.meee.com.tw/7cDaWyU.jpg', 'https://i.meee.com.tw/VBOiyxl.jpg', 'https://i.meee.com.tw/7RhEFsO.jpg', 'https://i.meee.com.tw/gWFHTfh.jpg', 'https://i.meee.com.tw/PMSu76m.jpg', 'https://i.meee.com.tw/2TjeXdU.jpg', 'https://i.meee.com.tw/edDiacb.jpg', 'https://i.meee.com.tw/9Ss2EVA.jpg', 'https://i.meee.com.tw/leGjRQu.jpg', 'https://i.meee.com.tw/iRghcBx.jpg', 'https://i.meee.com.tw/sIHEA1v.jpg', 'https://i.meee.com.tw/Bo8qOPs.jpg', 'https://i.meee.com.tw/f9DcHTT.jpg', 'https://i.meee.com.tw/JIfMKy7.jpg', 'https://i.meee.com.tw/i95UGif.jpg', 'https://i.meee.com.tw/xkbTgyT.jpg', 'https://i.meee.com.tw/24EydLu.jpg'] }
+        { name: 'MARTIN', imgs: generateImages('martin', 41) },
+        { name: 'JAMES', imgs: generateImages('james', 41) },
+        { name: 'SEONGHYEON', imgs: generateImages('seonghyeon', 41) },
+        { name: 'KEONHO', imgs: generateImages('keonho', 41) },
+        { name: 'JUHOON', imgs: generateImages('juhoon', 41) }
     ];
 
     /* --- GLOBAL STATE --- */
@@ -819,69 +753,6 @@
 
     const mainBtn = document.getElementById('main-btn'), redrawBtn = document.getElementById('redraw-btn');
     const quoteBox = document.getElementById('quote'), appCont = document.getElementById('app-container');
-
-    /* --- PWA Manifest Generation (Data URI) --- */
-    function generateManifest() {
-        const manifest = {
-            "name": "CORTIS Daily",
-            "short_name": "CORTIS",
-            "start_url": ".",
-            "display": "standalone",
-            "background_color": "#ffffff",
-            "theme_color": "#ffffff",
-            "icons": [{
-                "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Ccircle cx='256' cy='256' r='256' fill='%23494848'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' font-size='200' fill='white' font-family='sans-serif' font-weight='bold'%3EC%3C/text%3E%3C/svg%3E",
-                "sizes": "512x512",
-                "type": "image/svg+xml"
-            }]
-        };
-        const stringManifest = JSON.stringify(manifest);
-        const blob = new Blob([stringManifest], {type: 'application/json'});
-        const manifestURL = URL.createObjectURL(blob);
-        document.getElementById('manifest-placeholder').setAttribute('href', manifestURL);
-    }
-    generateManifest();
-
-    /* --- PWA INSTALL LOGIC --- */
-    let deferredPrompt;
-    
-    // Listen for install prompt (Android/Chrome)
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        // Show install button for Android
-        document.getElementById('install-btn').style.display = 'flex';
-    });
-
-    // Detect iOS
-    const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
-    // Detect Standalone (already installed)
-    const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
-
-    // Show button for iOS if not standalone
-    if (isIos && !isStandalone) {
-        document.getElementById('install-btn').style.display = 'flex';
-    }
-
-    function handleInstall() {
-        if (deferredPrompt) {
-            // Android/Chrome logic
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    document.getElementById('install-btn').style.display = 'none';
-                }
-                deferredPrompt = null;
-            });
-        } else if (isIos) {
-            // iOS logic: Show guide
-            document.getElementById('install-modal').classList.add('active');
-        }
-    }
-
-    function closeInstallGuide() {
-        document.getElementById('install-modal').classList.remove('active');
-    }
 
     /* --- UI FUNCTIONS --- */
     function updateUI() {
@@ -944,7 +815,7 @@
                 mainBtn.onclick = handleMain;
                 let wIdx = welcomeIdx % lang.welcomeMsgs.length;
                 let msg = lang.welcomeMsgs[wIdx];
-                quoteBox.innerHTML = msg.replace("{user}", userSpan);             
+                quoteBox.innerHTML = msg.replace("{user}", userSpan);              
             }
         } else if (state === 'DRAWN' || state === 'PLAYING') {
             mainBtn.innerText = lang.breakBtn;
@@ -1338,7 +1209,7 @@
     /* --- BOOT --- */
     document.addEventListener('gesturestart', (e) => e.preventDefault());
     document.body.addEventListener('touchmove', function(e) {
-        if(!e.target.closest('.g-page') && !e.target.closest('#pull-scene')) { e.preventDefault(); }
+        if(!e.target.closest('.g-page') && !e.target.closest('#pull-scene') && !e.target.closest('.letter-paper')) { e.preventDefault(); }
     }, { passive: false });
 
     window.onload = () => { checkName(); updateUI(); };
